@@ -472,3 +472,4 @@ header.kop .sub { margin: .45rem auto 0; max-width: 46rem; color: var(--blauw-1)
 /* Lab aan: duidelijk bewerkbaar */
 .lab-aan #partijen input.zetels { border: 1px solid var(--blauw-2); background: #fff; }
 #partijen input.zetels.gewijzigd { color: #8a5d00; background: #fff3d6; border-color: #e0b44c; font-weight: 700; }
+.ak-citaat { margin-top: .5rem !important; padding-top: .4rem; border-top: 1px dashed var(--lijn); }

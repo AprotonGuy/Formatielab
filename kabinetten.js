@@ -38,6 +38,7 @@
     balkenende2: OB('kst-28637-19.html', 'Kamerstuk 28637 nr. 19 — hoofdlijnenakkoord CDA, VVD en D66 (2003)'),
     balkenende1: OB('kst-28375-5.html', 'Kamerstuk 28375 nr. 5 — strategisch akkoord CDA, LPF en VVD (2002)')
   };
+  window.KABINET_AKKOORD = AK;
 
   const WET = {
     zvw:          WT('BWBR0018450', 'Zorgverzekeringswet'),
@@ -108,13 +109,13 @@
           bronnen: [PARLEMENT_JETTEN, AK.jetten]
         },
         wonen: {
-          kort: 'Doel van 100.000 extra woningen per jaar.',
+          kort: 'Bouwproductie omhoog richting de gewenste 100.000 woningen per jaar.',
           meer: 'De bouwambitie hangt sterk af van het oplossen van de stikstofproblemen, omdat bouwprojecten anders geen vergunning krijgen.',
           bronnen: [HVN_AKKOORD]
         },
         zorg: {
-          kort: 'Bezuinigingen op zorg, o.a. hogere eigen bijdragen.',
-          meer: 'Het akkoord remt de stijging van de zorguitgaven, onder meer via hogere eigen bijdragen. Vakbonden en zorgorganisaties reageerden kritisch.',
+          kort: 'Eigen risico omhoog (+€60 in 2027) om een hogere zorgpremie te voorkomen.',
+          meer: 'Het akkoord remt de stijging van de zorguitgaven. Om een hogere zorgpremie te voorkomen gaat het eigen risico in 2027 met €60 omhoog. Vakbonden en zorgorganisaties reageerden kritisch.',
           bronnen: [NOS_AKKOORD, NOS_VAKBONDEN]
         },
         aow: {
@@ -154,12 +155,12 @@
           bronnen: [AK.schoof, ANALYSE.cpbSchoof]
         },
         zorg: {
-          kort: 'Halvering van het eigen risico afgesproken (vanaf 2027).',
+          kort: 'Eigen risico meer dan halveren, naar €165 in 2027.',
           meer: 'Een belangrijke wens van PVV en NSC: het verplichte eigen risico in de zorgverzekering zou vanaf 2027 ongeveer halveren.',
           bronnen: [AK.schoof]
         },
         defensie: {
-          kort: 'Instemming met de nieuwe NAVO-norm (3,5% + 1,5%) op de top in Den Haag.',
+          kort: 'Akkoord: NAVO-norm van 2% wettelijk vastleggen. In juni 2025 instemming met de nieuwe norm (3,5% + 1,5%).',
           meer: 'Nederland was in juni 2025 gastheer van de NAVO-top. Daar spraken de lidstaten af om richting 3,5% van het bbp aan kerndefensie en 1,5% aan aanverwante uitgaven te gaan.',
           bronnen: [AK.schoof]
         },
@@ -190,7 +191,7 @@
       bron: 'https://www.parlement.com/kabinet-rutte-iv-2022-2024',
       beleid: {
         defensie: {
-          kort: 'Defensie naar de NAVO-norm van 2%; grote steun aan Oekraïne.',
+          kort: 'Akkoord: naar het EU-NAVO-gemiddelde. Na de Russische inval naar de NAVO-norm van 2%, en grote steun aan Oekraïne.',
           meer: 'Na de Russische invasie van Oekraïne in februari 2022 werd het defensiebudget structureel verhoogd tot de NAVO-norm van 2% van het bbp. Nederland gaf veel militaire steun, waaronder F-16\'s.',
           bronnen: [AK.rutte4]
         },
@@ -200,12 +201,12 @@
           bronnen: [AK.rutte4]
         },
         klimaat: {
-          kort: 'Klimaatfonds van €35 mld; doel 55–60% minder CO₂ in 2030.',
+          kort: 'Klimaatdoel 2030 naar minstens 55% minder CO₂; klimaatfonds van €35 mld.',
           meer: 'Rutte IV verhoogde het klimaatdoel en legde wettelijk vast dat Nederland in 2050 klimaatneutraal moet zijn. Er kwam een fonds voor investeringen in de energietransitie.',
           bronnen: [AK.rutte4, ANALYSE.klimaatRutte4]
         },
         koopkracht: {
-          kort: 'Minimumloon +10% (2023) en een prijsplafond voor energie.',
+          kort: 'Minimumloon omhoog (akkoord: +7,5%; door de inflatie +10% in 2023) en een prijsplafond voor energie.',
           meer: 'Door de hoge inflatie in 2022 werd het minimumloon op 1 januari 2023 extra verhoogd. Huishoudens kregen een prijsplafond op energie en een energietoeslag voor lage inkomens.',
           bronnen: [AK.rutte4]
         },
@@ -281,7 +282,7 @@
           bronnen: [AK.rutte3, ANALYSE.cpbRutte3]
         },
         migratie: {
-          kort: 'Kinderpardon afgesloten met een eenmalige regeling (2019).',
+          kort: 'Akkoord: kinderpardon blijft zoals het is. In 2019 toch een afsluitende regeling.',
           meer: 'Na veel maatschappelijke druk (o.a. rond Lili en Howick) kwam er een afsluitende regeling voor langdurig in Nederland verblijvende kinderen; daarna verviel het kinderpardon.',
           bronnen: [AK.rutte3]
         },

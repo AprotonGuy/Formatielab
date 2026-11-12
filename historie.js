@@ -87,6 +87,7 @@
           <div>
             <h4>Wat ${k.naam} deed</h4>
             <p>${gedaan ? (gedaan.meer || gedaan.kort) : 'Voor dit thema is geen opvallend beleid van dit kabinet vastgelegd. Dat betekent niet dat er niets gebeurde; kijk in het overzicht van het kabinet.'}</p>
+            ${akkoordCitaat(k, a.thema.id)}
           </div>
           <div>
             <h4>Verwachting voor jouw coalitie</h4>
@@ -123,10 +124,23 @@
         ${officieelBlok(k)}
         <div class="hist-kop"><span>Thema</span><span>Wat dit kabinet echt deed</span><span>Verwachting voor jouw coalitie</span></div>
         <div class="hist-themas">${themaRijen}</div>
-        <p class="klein verantwoording hist-verantwoording">Klik op een thema voor uitleg en bronnen. De teksten zijn samenvattingen door Claude (AI),
-          niet per regel nagelezen; de links zijn gecontroleerd op bestaan. Alles staat in <code>kabinetten.js</code>.</p>
+        <p class="klein verantwoording hist-verantwoording">Klik op een thema voor uitleg en bronnen. Per thema staat een letterlijk citaat uit het akkoord van dit kabinet
+          (automatisch gecontroleerd tegen de officiële pdf). Wat er later in de kabinetsperiode gebeurde, is een samenvatting
+          met eigen bronnen. Alles staat in <code>kabinetten.js</code> en <code>akkoord-citaten.js</code>.</p>
       </div>
     </details>`;
+  }
+
+  // Wat stond er over dit thema in het akkoord? (akkoord-citaten.js)
+  function akkoordCitaat(k, themaId) {
+    const cit = ((window.AKKOORD_CITATEN || {})[k.id] || {})[themaId];
+    const doc = (window.KABINET_AKKOORD || {})[k.id];
+    if (cit && doc) {
+      return `<p class="ak-citaat"><strong>In het akkoord:</strong> <span class="citaat">„${cit.c}”
+        — ${ankerLink(`${doc.url}#page=${cit.p}`, `p. ${cit.p}`)}</span></p>`;
+    }
+    return `<p class="ak-citaat klein"><strong>In het akkoord:</strong> niet letterlijk teruggevonden. Dit gebeurde
+      later in de kabinetsperiode (bijvoorbeeld door een crisis), of het is in de begroting uitgewerkt.</p>`;
   }
 
   function ankerLink(url, titel) {

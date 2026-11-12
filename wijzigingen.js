@@ -12,6 +12,7 @@ window.CONTACT = {
 // inhoudelijke wijziging aan standpunten, posities, kabinetten of rekenwijze. Automatische updates
 // van peilingen en stemmingen hoeven hier niet in.
 window.WIJZIGINGEN = [
+  { datum: '2026-11-12', wat: 'Samenvattingen van eerdere kabinetten nagelezen tegen de officiële akkoorden: 50 letterlijke citaten met paginanummer toegevoegd. Gecorrigeerd: Jetten (eigen risico +€60 in 2027, woningbouw), Schoof (eigen risico naar €165; NAVO 2% in akkoord, 3,5% pas later), Rutte IV (minimumloon 7,5% in akkoord, 10% later; defensie EU-NAVO-gemiddelde, 2% pas na de inval in Oekraïne; klimaatdoel 55%), Rutte III (kinderpardon bleef in akkoord, afsluitende regeling pas in 2019).' },
   { datum: '2026-11-12', wat: 'Lab-knop: zetels zijn standaard vast en alleen aan te passen als het Lab aan staat. Aangepaste zetels worden gemarkeerd.' },
   { datum: '2026-11-12', wat: 'Per eerder kabinet een uitklapvak "Effect op Nederland" met officiële jaarcijfers van Eurostat en het CBS (groei, werkloosheid, inflatie, staatsschuld, begrotingssaldo, asiel, nieuwbouw, CO2), dagelijks bijgewerkt.' },
   { datum: '2026-11-12', wat: 'Scenario "Huidige Tweede Kamer" gecorrigeerd (BBB 3 zetels plus eenmansfractie Keijzer) en voortaan dagelijks automatisch bijgewerkt uit de open data van de Tweede Kamer.' },
