@@ -1,0 +1,44 @@
+# Formatielab: elke dag de nieuwste peilingen en stemmingen ophalen en de website publiceren.
+name: Bijwerken en publiceren
+
+on:
+  schedule:
+    - cron: '30 5 * * *'   # elke dag om 05:30 UTC (06:30/07:30 Nederlandse tijd)
+  push:
+    branches: [main]       # na elke wijziging in de code ook meteen publiceren
+  workflow_dispatch:       # handmatig starten via het tabblad Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  bouwen:
+    runs-on: windows-latest   # de ophaalscripts zijn geschreven voor Windows PowerShell
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Peilingwijzer en stemgedrag ophalen
+        shell: powershell
+        run: .\bijwerken.ps1
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  publiceren:
+    needs: bouwen
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

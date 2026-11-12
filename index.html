@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Formatielab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Formatielab</h1>
+    <p class="sub">Welke partijen kunnen samen regeren, wat gaan ze dan doen, en hoe stemmen ze echt? Zo zie je wat je stem kan betekenen.</p>
+    <p class="actueel" id="actueel"></p>
+  </header>
+
+  <main>
+    <section class="paneel" id="paneel-partijen">
+      <div class="regel">
+        <label for="scenario">Scenario</label>
+        <select id="scenario"></select>
+      </div>
+      <p id="scenario-bron" class="klein"></p>
+      <table id="partijen">
+        <thead>
+          <tr><th>Partij</th><th>Zetels</th><th title="In coalitie">Kies</th><th title="Uitsluiten">Uit</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p id="totaal" class="klein"></p>
+      <button type="button" id="herstel" class="link">Zetels terugzetten naar bron</button>
+    </section>
+
+    <section class="paneel" id="paneel-kamer">
+      <svg class="halfrond" id="halfrond" viewBox="-1.06 -1.08 2.12 1.16" role="img" aria-label="Zetelverdeling"></svg>
+      <div id="samenvatting"></div>
+      <button type="button" id="wis">Selectie wissen</button>
+      <h3 class="ek-titel">Eerste Kamer</h3>
+      <svg class="halfrond" id="halfrond-ek" viewBox="-1.06 -1.08 2.12 1.16" role="img" aria-label="Zetelverdeling Eerste Kamer"></svg>
+      <p id="ek-bron" class="klein"></p>
+    </section>
+
+    <section class="paneel" id="paneel-coalities">
+      <h2>Mogelijke meerderheden</h2>
+      <div class="filters">
+        <label><input type="checkbox" id="f-minimaal"> Alleen minimaal winnend <span class="uitleg" title="Elke partij in de coalitie is nodig voor de meerderheid">?</span></label>
+        <label><input type="checkbox" id="f-selectie"> Moet mijn selectie bevatten</label>
+        <label><input type="checkbox" id="f-ek"> Ook meerderheid in Eerste Kamer</label>
+        <label>Max. partijen
+          <select id="f-max">
+            <option value="0">geen</option><option value="2">2</option><option value="3">3</option>
+            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+          </select>
+        </label>
+        <label>Sorteer
+          <select id="f-sorteer">
+            <option value="krap">Krapste meerderheid</option>
+            <option value="weinig">Minste partijen</option>
+            <option value="groot">Grootste meerderheid</option>
+          </select>
+        </label>
+      </div>
+      <p id="aantal" class="klein"></p>
+      <ol id="coalities"></ol>
+    </section>
+  </main>
+
+  <section class="paneel" id="paneel-analyse">
+    <details class="sectie" data-sectie="analyse" open>
+      <summary><h2>Wat gaat deze coalitie waarschijnlijk doen?</h2><span class="sectie-hint"></span></summary>
+      <p class="klein" id="analyse-uitleg"></p>
+      <div id="analyse"></div>
+    </details>
+  </section>
+
+  <section class="paneel" id="paneel-stemgedrag">
+    <details class="sectie" data-sectie="stemgedrag" open>
+      <summary><h2>Echt stemgedrag in de Tweede Kamer</h2><span class="sectie-hint"></span></summary>
+      <p class="klein">Hoe vaak stemden deze partijen echt hetzelfde over moties, amendementen en wetten? Gebaseerd op alle
+        stemmingen in de huidige Tweede Kamer, niet op inschattingen.</p>
+      <div id="stemgedrag"></div>
+    </details>
+  </section>
+
+  <section class="paneel" id="paneel-historie">
+    <details class="sectie" data-sectie="historie" open>
+      <summary><h2>Vergelijk met eerdere kabinetten</h2><span class="sectie-hint"></span></summary>
+      <p class="klein">Welke echte kabinetten sinds 2002 hadden (deels) dezelfde partijen, hoe lang hielden ze het vol,
+        en wat deden ze echt per thema? Naast elkaar met de verwachting voor jouw coalitie.</p>
+      <div id="historie"></div>
+    </details>
+  </section>
+
+  <footer class="klein">
+    Zetelaantallen staan in <code>data.js</code>, standpunten en urgentie in <code>standpunten.js</code>, eerdere kabinetten in <code>kabinetten.js</code>.
+    Controleer cijfers bij de Kiesraad. Volgorde in het halfrond is een ruwe links-rechtsindeling.
+    Standpunten zijn vereenvoudigde inschattingen, geen officiële partijposities.
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="peilingen.js"></script>
+  <script src="standpunten.js"></script>
+  <script src="stemgedrag.js"></script>
+  <script src="stemanalyse.js"></script>
+  <script src="analyse.js"></script>
+  <script src="kabinetten.js"></script>
+  <script src="historie.js"></script>
+  <script src="app.js"></script>
+  <script src="actueel.js"></script>
+  <script>
+    // Onthoud welke secties ingeklapt zijn.
+    document.querySelectorAll('details.sectie').forEach(function (d) {
+      var sleutel = 'coalitiewijzer-sectie-' + d.dataset.sectie;
+      if (localStorage.getItem(sleutel) === 'dicht') d.open = false;
+      d.addEventListener('toggle', function () { localStorage.setItem(sleutel, d.open ? 'open' : 'dicht'); });
+    });
+  </script>
+</body>
+</html>

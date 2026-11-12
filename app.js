@@ -1,0 +1,443 @@
+// Formatielab — logica
+(function () {
+  'use strict';
+
+  const PARTIJEN = window.PARTIJEN || {};
+  const SCENARIOS = window.SCENARIOS || [];
+  const EERSTE_KAMER = window.EERSTE_KAMER || null;
+  const OPSLAG_SLEUTEL = 'coalitiewijzer-v1';
+  const MAX_PARTIJEN_REKENEN = 18; // 2^18 combinaties is nog snel genoeg
+  const MAX_TONEN = 200;
+
+  const standaard = {
+    scenario: SCENARIOS.length ? SCENARIOS[0].id : '',
+    aangepast: {},      // { scenarioId: { partijId: zetels } }
+    gekozen: [],
+    uitgesloten: [],
+    filters: { minimaal: true, metSelectie: true, ookEK: false, maxPartijen: 0, sorteer: 'krap' }
+  };
+  const state = laden();
+
+  const $ = (id) => document.getElementById(id);
+
+  // ---------- opslag ----------
+  function laden() {
+    try {
+      const ruw = JSON.parse(localStorage.getItem(OPSLAG_SLEUTEL));
+      if (ruw && SCENARIOS.some((s) => s.id === ruw.scenario)) {
+        return Object.assign({}, standaard, ruw, {
+          filters: Object.assign({}, standaard.filters, ruw.filters)
+        });
+      }
+    } catch (e) { /* negeer kapotte opslag */ }
+    return JSON.parse(JSON.stringify(standaard));
+  }
+  function opslaan() {
+    try { localStorage.setItem(OPSLAG_SLEUTEL, JSON.stringify(state)); } catch (e) { /* bv. privémodus */ }
+  }
+
+  // ---------- data ----------
+  function scenario() {
+    return SCENARIOS.find((s) => s.id === state.scenario) || SCENARIOS[0];
+  }
+
+  function maakPartij(id, basis, zetels) {
+    const info = PARTIJEN[id] || { kort: id, naam: id, kleur: '#888888', volgorde: 999 };
+    return {
+      id,
+      kort: info.kort || id,
+      naam: info.naam || id,
+      kleur: info.kleur,
+      volgorde: info.volgorde,
+      basis,
+      zetels
+    };
+  }
+
+  function partijLijst() {
+    const sc = scenario();
+    const extra = state.aangepast[sc.id] || {};
+    return Object.keys(sc.zetels).map((id) =>
+      maakPartij(id, sc.zetels[id], id in extra ? extra[id] : sc.zetels[id]));
+  }
+
+  // Eerste Kamer: vaste verdeling uit data.js.
+  function ekLijst() {
+    if (!EERSTE_KAMER) return [];
+    return Object.keys(EERSTE_KAMER.zetels).map((id) =>
+      maakPartij(id, EERSTE_KAMER.zetels[id], EERSTE_KAMER.zetels[id]));
+  }
+  // Een partij plus haar andere namen (zelfdeAls in data.js), bv. GL-PvdA ↔ PRO.
+  function namen(id) {
+    const info = PARTIJEN[id];
+    return [id].concat(info && info.zelfdeAls ? info.zelfdeAls : []);
+  }
+  function metAliassen(ids) {
+    const s = new Set();
+    ids.forEach((id) => namen(id).forEach((n) => s.add(n)));
+    return s;
+  }
+  function ekZetelsVan(id) {
+    if (!EERSTE_KAMER) return 0;
+    for (const n of namen(id)) if (EERSTE_KAMER.zetels[n]) return EERSTE_KAMER.zetels[n];
+    return 0;
+  }
+
+  const som = (lijst) => lijst.reduce((a, p) => a + p.zetels, 0);
+  const meerderheidVan = (totaal) => Math.floor(totaal / 2) + 1;
+
+  function chip(p) {
+    return `<span class="chip" style="background:${p.kleur}" title="${p.naam}">${p.kort}</span>`;
+  }
+
+  // ---------- partijtabel ----------
+  function bouwTabel() {
+    const tbody = $('partijen').querySelector('tbody');
+    const sc = scenario();
+    const lijst = partijLijst().sort((a, b) => b.basis - a.basis || a.kort.localeCompare(b.kort));
+    tbody.innerHTML = lijst.map((p) => {
+      const m = sc.marge && sc.marge[p.id];
+      const marge = m ? `<small class="marge" title="Onzekerheidsmarge van de peiling">${m[0]}–${m[1]}</small>` : '';
+      return `
+      <tr data-id="${p.id}">
+        <td><span class="stip" style="background:${p.kleur}"></span><span class="naam" title="${p.naam}">${p.kort}</span></td>
+        <td class="zetelcel"><input type="number" class="zetels" min="0" max="150" step="1" value="${p.zetels}" aria-label="Zetels ${p.naam}">${marge}</td>
+        <td><input type="checkbox" class="kies" aria-label="${p.naam} in coalitie"></td>
+        <td><button type="button" class="sluit" aria-pressed="false" aria-label="${p.naam} uitsluiten" title="Uitsluiten">✕</button></td>
+      </tr>`;
+    }).join('');
+
+    const bron = $('scenario-bron');
+    if (sc.bron) {
+      let host = sc.bron;
+      try { host = new URL(sc.bron).hostname.replace(/^www\./, ''); } catch (e) { /* toon volledige link */ }
+      bron.innerHTML = `Bron: <a href="${sc.bron}" target="_blank" rel="noopener">${host}</a>`;
+    } else {
+      bron.textContent = '';
+    }
+  }
+
+  function syncTabel() {
+    const gekozen = new Set(state.gekozen);
+    const uit = new Set(state.uitgesloten);
+    document.querySelectorAll('#partijen tbody tr').forEach((tr) => {
+      const id = tr.dataset.id;
+      const isUit = uit.has(id);
+      tr.classList.toggle('uitgesloten', isUit);
+      tr.classList.toggle('gekozen', gekozen.has(id));
+      const kies = tr.querySelector('.kies');
+      kies.checked = gekozen.has(id);
+      kies.disabled = isUit;
+      tr.querySelector('.sluit').setAttribute('aria-pressed', String(isUit));
+    });
+  }
+
+  // ---------- halfrond ----------
+  function zetelPosities(n) {
+    if (n <= 0) return [];
+    const rijen = Math.max(2, Math.min(12, Math.round(Math.sqrt(n / 2.3))));
+    const rBinnen = 0.38, rBuiten = 1;
+    const stap = (rBuiten - rBinnen) / (rijen - 1);
+    const radii = Array.from({ length: rijen }, (_, i) => rBinnen + i * stap);
+    const somR = radii.reduce((a, b) => a + b, 0);
+    const aantallen = radii.map((r) => Math.round((n * r) / somR));
+    let verschil = n - aantallen.reduce((a, b) => a + b, 0);
+    for (let i = rijen - 1; verschil !== 0; i = (i - 1 + rijen) % rijen) {
+      if (verschil > 0) { aantallen[i]++; verschil--; }
+      else if (aantallen[i] > 0) { aantallen[i]--; verschil++; }
+    }
+
+    // Stipgrootte: past zowel tussen rijen als langs de krapste boog.
+    let straal = stap * 0.42;
+    radii.forEach((r, i) => {
+      if (aantallen[i] > 1) straal = Math.min(straal, ((Math.PI * r) / (aantallen[i] - 1)) * 0.42);
+    });
+
+    const plekken = [];
+    radii.forEach((r, ri) => {
+      const k = aantallen[ri];
+      for (let j = 0; j < k; j++) {
+        const hoek = k === 1 ? Math.PI / 2 : Math.PI - (j / (k - 1)) * Math.PI;
+        plekken.push({ hoek, r, x: r * Math.cos(hoek), y: -r * Math.sin(hoek) });
+      }
+    });
+    // Links naar rechts, zodat elke partij een taartpunt vormt.
+    plekken.sort((a, b) => b.hoek - a.hoek || a.r - b.r);
+    plekken.forEach((p) => { p.straal = straal; });
+    return plekken;
+  }
+
+  function tekenHalfrond(svg, lijst, meerderheid) {
+    const totaal = som(lijst);
+    const geordend = lijst.filter((p) => p.zetels > 0).sort((a, b) => a.volgorde - b.volgorde);
+    const plekken = zetelPosities(som(geordend));
+    const gekozen = metAliassen(state.gekozen);
+    const uit = metAliassen(state.uitgesloten);
+    const heeftSelectie = gekozen.size > 0;
+
+    let html = '';
+    let i = 0;
+    for (const p of geordend) {
+      let klasse = 'zetel';
+      if (uit.has(p.id)) klasse += ' uit';
+      else if (heeftSelectie && !gekozen.has(p.id)) klasse += ' gedimd';
+      html += `<g class="${klasse}" fill="${p.kleur}"><title>${p.naam}: ${p.zetels} zetels</title>`;
+      for (let k = 0; k < p.zetels; k++, i++) {
+        const z = plekken[i];
+        html += `<circle cx="${z.x.toFixed(4)}" cy="${z.y.toFixed(4)}" r="${z.straal.toFixed(4)}"/>`;
+      }
+      html += '</g>';
+    }
+    const gekozenZetels = som(lijst.filter((p) => gekozen.has(p.id)));
+    html += `<text class="midden-getal" x="0" y="-0.12">${heeftSelectie ? gekozenZetels : totaal}</text>`;
+    html += `<text class="midden-label" x="0" y="-0.02">${heeftSelectie ? `van ${totaal} · ${meerderheid} nodig` : `zetels · ${meerderheid} nodig`}</text>`;
+    svg.innerHTML = html;
+  }
+
+  // ---------- samenvatting ----------
+  function tekenSamenvatting(lijst, totaal, meerderheid) {
+    const el = $('samenvatting');
+    const gekozen = lijst.filter((p) => state.gekozen.includes(p.id)).sort((a, b) => b.zetels - a.zetels);
+    if (!gekozen.length) {
+      el.innerHTML = '<p class="klein">Vink partijen aan om een coalitie samen te stellen, of klik op een coalitie in de lijst.</p>';
+      return;
+    }
+    const s = som(gekozen);
+    let status;
+    if (s >= meerderheid) {
+      const boven = s - Math.floor(totaal / 2);
+      status = `<span class="ok">Meerderheid ✓</span> ${s} zetels (${boven} boven de helft)`;
+    } else {
+      status = `<span class="nee">Geen meerderheid</span> ${s} zetels — nog ${meerderheid - s} nodig`;
+    }
+    let extra = '';
+    if (s >= meerderheid) {
+      const overbodig = gekozen.filter((p) => s - p.zetels >= meerderheid);
+      if (overbodig.length) {
+        extra = `<p class="klein">Niet strikt nodig voor de meerderheid: ${overbodig.map((p) => p.kort).join(', ')}</p>`;
+      }
+    }
+    let ek = '';
+    if (EERSTE_KAMER) {
+      const ekTotaal = som(ekLijst());
+      const ekNodig = meerderheidVan(ekTotaal);
+      const ekS = gekozen.reduce((a, p) => a + ekZetelsVan(p.id), 0);
+      ek = ekS >= ekNodig
+        ? `<p class="ek-regel">Eerste Kamer: <span class="ok">meerderheid ✓</span> ${ekS} van ${ekTotaal}</p>`
+        : `<p class="ek-regel">Eerste Kamer: <span class="nee">geen meerderheid</span> ${ekS} van ${ekTotaal} — nog ${ekNodig - ekS} nodig</p>`;
+    }
+    el.innerHTML = `<p class="status">${status}</p>${ek}<div class="chips">${gekozen.map(chip).join('')}</div>${extra}`;
+  }
+
+  // ---------- alle coalities ----------
+  function tekenCoalities(lijst, meerderheid) {
+    const f = state.filters;
+    const uit = new Set(state.uitgesloten);
+    let kandidaten = lijst.filter((p) => p.zetels > 0 && !uit.has(p.id)).sort((a, b) => b.zetels - a.zetels);
+    let afgekapt = false;
+    if (kandidaten.length > MAX_PARTIJEN_REKENEN) {
+      kandidaten = kandidaten.slice(0, MAX_PARTIJEN_REKENEN);
+      afgekapt = true;
+    }
+    const n = kandidaten.length;
+    const zet = kandidaten.map((p) => p.zetels);
+    const ekZet = kandidaten.map((p) => ekZetelsVan(p.id));
+    const ekNodig = EERSTE_KAMER ? meerderheidVan(som(ekLijst())) : 0;
+
+    let vereist = 0;
+    if (f.metSelectie) {
+      state.gekozen.forEach((id) => {
+        const idx = kandidaten.findIndex((p) => p.id === id);
+        if (idx >= 0) vereist |= 1 << idx;
+      });
+    }
+
+    const res = [];
+    const eind = 1 << n;
+    for (let m = 1; m < eind; m++) {
+      if ((m & vereist) !== vereist) continue;
+      let s = 0, ek = 0, aantal = 0, kleinste = Infinity;
+      for (let i = 0; i < n; i++) {
+        if (m & (1 << i)) {
+          s += zet[i]; ek += ekZet[i]; aantal++;
+          if (zet[i] < kleinste) kleinste = zet[i];
+        }
+      }
+      if (s < meerderheid) continue;
+      if (f.maxPartijen && aantal > f.maxPartijen) continue;
+      // Minimaal winnend (Tweede Kamer): zonder de kleinste partij is er al geen meerderheid meer.
+      if (f.minimaal && s - kleinste >= meerderheid) continue;
+      if (f.ookEK && EERSTE_KAMER && ek < ekNodig) continue;
+      res.push({ m, s, ek, aantal });
+    }
+
+    const sorteer = {
+      krap: (a, b) => a.s - b.s || a.aantal - b.aantal,
+      weinig: (a, b) => a.aantal - b.aantal || a.s - b.s,
+      groot: (a, b) => b.s - a.s || a.aantal - b.aantal
+    }[f.sorteer] || ((a, b) => a.s - b.s);
+    res.sort(sorteer);
+
+    let info = `${res.length} ${res.length === 1 ? 'coalitie' : 'coalities'} gevonden`;
+    if (res.length > MAX_TONEN) info += ` — de eerste ${MAX_TONEN} worden getoond`;
+    if (afgekapt) info += ` (alleen de ${MAX_PARTIJEN_REKENEN} grootste partijen meegenomen)`;
+    if (!res.length && (f.ookEK || (f.metSelectie && state.gekozen.length))) info += '. Probeer een filter uit te zetten.';
+    $('aantal').textContent = info;
+
+    const huidig = [...state.gekozen].sort().join('|');
+    $('coalities').innerHTML = res.slice(0, MAX_TONEN).map((c) => {
+      const leden = kandidaten.filter((_, i) => c.m & (1 << i));
+      const ids = leden.map((p) => p.id);
+      const actief = [...ids].sort().join('|') === huidig ? ' actief' : '';
+      return `<li><button type="button" class="coalitie${actief}" data-leden="${ids.join(',')}">
+        <span class="chips">${leden.map(chip).join('')}</span>
+        <span class="cijfers"><strong>${c.s}</strong> zetels<br>${EERSTE_KAMER
+          ? `<span class="${c.ek >= ekNodig ? 'ek-ok' : 'ek-nee'}" title="Zetels in de Eerste Kamer (${ekNodig} nodig)">EK ${c.ek} ${c.ek >= ekNodig ? '✓' : '✗'}</span> · `
+          : ''}${c.aantal} partijen</span>
+      </button></li>`;
+    }).join('');
+  }
+
+  // ---------- alles tekenen ----------
+  function render() {
+    const lijst = partijLijst();
+    const ids = new Set(lijst.map((p) => p.id));
+    state.gekozen = state.gekozen.filter((id) => ids.has(id));
+    state.uitgesloten = state.uitgesloten.filter((id) => ids.has(id));
+
+    const totaal = som(lijst);
+    const meerderheid = meerderheidVan(totaal);
+    let t = `Totaal ${totaal} zetels · meerderheid vanaf ${meerderheid}`;
+    $('totaal').innerHTML = totaal !== 150 ? `${t} <span class="waarschuwing">(niet 150!)</span>` : t;
+
+    syncTabel();
+    tekenHalfrond($('halfrond'), lijst, meerderheid);
+    if (EERSTE_KAMER) {
+      const ek = ekLijst();
+      tekenHalfrond($('halfrond-ek'), ek, meerderheidVan(som(ek)));
+      const tkNamen = metAliassen([...ids]);
+      const alleenEK = ek.filter((p) => p.zetels > 0 && !tkNamen.has(p.id)).map((p) => p.kort);
+      $('ek-bron').textContent = EERSTE_KAMER.titel +
+        (alleenEK.length ? `. Niet in dit Tweede Kamer-scenario, dus nooit in een coalitie: ${alleenEK.join(', ')}.` : '.');
+    }
+    tekenSamenvatting(lijst, totaal, meerderheid);
+    tekenCoalities(lijst, meerderheid);
+    const leden = lijst.filter((p) => state.gekozen.includes(p.id));
+    let analyses = [];
+    if (window.CoalitieAnalyse) {
+      analyses = window.CoalitieAnalyse.teken({
+        container: $('analyse'),
+        uitleg: $('analyse-uitleg'),
+        leden,
+        alle: lijst.filter((p) => p.zetels > 0),
+        namen,
+        chip,
+        stand: window.STANDPUNTEN_STAND
+      }) || [];
+    }
+    if (window.CoalitieStemgedrag) {
+      window.CoalitieStemgedrag.teken({
+        container: $('stemgedrag'),
+        leden,
+        alle: lijst.filter((p) => p.zetels > 0),
+        namen,
+        chip
+      });
+    }
+    if (window.CoalitieHistorie && window.CoalitieAnalyse) {
+      window.CoalitieHistorie.teken({
+        container: $('historie'),
+        leden,
+        analyses,
+        namen,
+        chip,
+        richtingKort: window.CoalitieAnalyse.richtingKort,
+        soortLabel: window.CoalitieAnalyse.soortLabel,
+        soortUitleg: window.CoalitieAnalyse.soortUitleg,
+        scenario: scenario().titel
+      });
+    }
+    opslaan();
+  }
+
+  // ---------- events ----------
+  function koppel() {
+    const sel = $('scenario');
+    sel.innerHTML = SCENARIOS.map((s) => `<option value="${s.id}">${s.titel}</option>`).join('');
+    sel.value = scenario().id;
+    sel.addEventListener('change', () => {
+      state.scenario = sel.value;
+      bouwTabel();
+      render();
+    });
+
+    const tbody = $('partijen').querySelector('tbody');
+    tbody.addEventListener('input', (e) => {
+      if (!e.target.classList.contains('zetels')) return;
+      const id = e.target.closest('tr').dataset.id;
+      let waarde = parseInt(e.target.value, 10);
+      if (!Number.isFinite(waarde) || waarde < 0) waarde = 0;
+      if (waarde > 150) waarde = 150;
+      const sc = scenario();
+      const extra = (state.aangepast[sc.id] = state.aangepast[sc.id] || {});
+      if (waarde === sc.zetels[id]) delete extra[id]; else extra[id] = waarde;
+      render();
+    });
+    tbody.addEventListener('change', (e) => {
+      if (!e.target.classList.contains('kies')) return;
+      const id = e.target.closest('tr').dataset.id;
+      state.gekozen = e.target.checked
+        ? [...new Set([...state.gekozen, id])]
+        : state.gekozen.filter((x) => x !== id);
+      render();
+    });
+    tbody.addEventListener('click', (e) => {
+      const knop = e.target.closest('.sluit');
+      if (!knop) return;
+      const id = knop.closest('tr').dataset.id;
+      if (state.uitgesloten.includes(id)) {
+        state.uitgesloten = state.uitgesloten.filter((x) => x !== id);
+      } else {
+        state.uitgesloten.push(id);
+        state.gekozen = state.gekozen.filter((x) => x !== id);
+      }
+      render();
+    });
+
+    $('herstel').addEventListener('click', () => {
+      delete state.aangepast[scenario().id];
+      bouwTabel();
+      render();
+    });
+    $('wis').addEventListener('click', () => { state.gekozen = []; render(); });
+
+    $('coalities').addEventListener('click', (e) => {
+      const knop = e.target.closest('.coalitie');
+      if (!knop) return;
+      state.gekozen = knop.dataset.leden.split(',');
+      render();
+    });
+
+    const f = state.filters;
+    const fMin = $('f-minimaal'), fSel = $('f-selectie'), fEK = $('f-ek'), fMax = $('f-max'), fSort = $('f-sorteer');
+    fMin.checked = f.minimaal;
+    fSel.checked = f.metSelectie;
+    fEK.checked = f.ookEK;
+    if (!EERSTE_KAMER) fEK.closest('label').hidden = true;
+    fEK.addEventListener('change', () => { f.ookEK = fEK.checked; render(); });
+    fMax.value = String(f.maxPartijen);
+    fSort.value = f.sorteer;
+    fMin.addEventListener('change', () => { f.minimaal = fMin.checked; render(); });
+    fSel.addEventListener('change', () => { f.metSelectie = fSel.checked; render(); });
+    fMax.addEventListener('change', () => { f.maxPartijen = parseInt(fMax.value, 10) || 0; render(); });
+    fSort.addEventListener('change', () => { f.sorteer = fSort.value; render(); });
+  }
+
+  if (!SCENARIOS.length) {
+    document.body.insertAdjacentHTML('afterbegin', '<p class="waarschuwing">Geen scenario\'s gevonden in data.js.</p>');
+    return;
+  }
+  koppel();
+  bouwTabel();
+  render();
+})();
