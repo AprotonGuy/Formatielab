@@ -12,6 +12,7 @@ window.CONTACT = {
 // inhoudelijke wijziging aan standpunten, posities, kabinetten of rekenwijze. Automatische updates
 // van peilingen en stemmingen hoeven hier niet in.
 window.WIJZIGINGEN = [
+  { datum: '2026-11-12', wat: 'Eerste Kamer-cijfers gecorrigeerd en gecontroleerd met eerstekamer.nl (o.a. BBB 11 i.p.v. 16, D66 7, FvD 3, plus vijf afgesplitste eenmansfracties). Worden voortaan dagelijks automatisch bijgewerkt.' },
   { datum: '2026-11-12', wat: 'Pagina "Over en methode" toegevoegd, met correctieprocedure en dit logboek.' },
   { datum: '2026-11-12', wat: 'Bij stemmingen staat nu wie de motie indiende (met partij en medeindieners).' },
   { datum: '2026-11-12', wat: 'Alle 11 thema\'s onderbouwd met citaten uit de verkiezingsprogramma\'s 2025: 176 standpunten met paginanummer. Diverse posities aangepast na het lezen van de programma\'s (o.a. VVD bij stikstof en asiel, CDA bij asiel, D66 bij asiel, AOW-standpunten van PVV en FvD).' },

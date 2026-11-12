@@ -35,10 +35,15 @@ window.PARTIJEN = {
 // Partijen die hier staan maar niet in de Tweede Kamer, tellen mee in het totaal
 // maar kunnen niet in een coalitie. Controleer de cijfers (tussentijdse afsplitsingen!).
 window.EERSTE_KAMER = {
-  titel: 'Eerste Kamer — na verkiezingen 30 mei 2023',
+  // Terugval als eerstekamer.js ontbreekt. Gecontroleerd op https://www.eerstekamer.nl/fracties (12 nov 2026).
+  // eerstekamer.js (automatisch, dagelijks) overschrijft dit.
+  titel: 'Eerste Kamer — fracties 12 november 2026',
+  bron: 'https://www.eerstekamer.nl/fracties',
   zetels: {
-    'BBB': 16, 'PRO': 14, 'VVD': 10, 'CDA': 6, 'D66': 5, 'PVV': 4, 'SP': 3, 'CU': 3,
-    'PvdD': 3, 'JA21': 3, 'FvD': 2, 'SGP': 2, 'Volt': 2, 'OPNL': 1, '50PLUS': 1
+    'PRO': 14, 'BBB': 11, 'VVD': 9, 'D66': 7, 'CDA': 6, 'PVV': 4, 'SP': 3, 'CU': 3, 'FvD': 3,
+    'PvdD': 2, 'JA21': 2, 'Volt': 2, 'SGP': 2, '50PLUS': 1, 'OPNL': 1,
+    'Fractie-Visseren-Hamakers': 1, 'Fractie-Beukering': 1, 'Fractie-Walenkamp': 1,
+    'Fractie-Van de Sanden': 1, 'Fractie-Van Gasteren': 1
   }
 };
 
