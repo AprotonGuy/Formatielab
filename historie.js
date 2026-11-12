@@ -22,8 +22,14 @@
   function jaren(van, tot) {
     return ((tot ? new Date(tot) : new Date()) - new Date(van)) / DAG / 365.25;
   }
+  // Duur in jaren (met decimalen) als "3 jaar en 1 maand", "1 jaar en 6 maanden" of "11 maanden".
   function jaarTekst(j) {
-    return j < 1 ? `${Math.round(j * 12)} maanden` : `${j.toFixed(1).replace('.', ',')} jaar`;
+    const maanden = Math.round(j * 12);
+    const jaar = Math.floor(maanden / 12);
+    const rest = maanden % 12;
+    const m = rest === 1 ? '1 maand' : `${rest} maanden`;
+    if (!jaar) return m;
+    return rest ? `${jaar} jaar en ${m}` : `${jaar} jaar`;
   }
   function jaartal(d) { return d ? d.slice(0, 4) : 'heden'; }
 
