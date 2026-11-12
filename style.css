@@ -316,3 +316,13 @@ header .actueel .oud-melding { display: inline-block; margin-left: .4rem; backgr
   .tab, .tab.actief { font-size: .95rem; padding: .5rem .8rem; flex: 1 1 100%; border-radius: 8px; }
   .tabbalk { padding-bottom: .4rem; }
 }
+
+/* Pijltje onder de geselecteerde tab (als een tekstballon), wijst naar de inhoud */
+.tab.actief { position: relative; z-index: 2; }
+.tab.actief::after {
+  content: ''; position: absolute; left: 1.1rem; top: 100%;
+  border-left: 14px solid transparent; border-right: 14px solid transparent;
+  border-top: 24px solid var(--blauw-1);
+}
+.tabs.ingeklapt .tab::after { content: none; }
+@media (max-width: 760px) { .tab.actief::after { top: 100%; border-top-width: 12px; border-left-width: 8px; border-right-width: 8px; } }
