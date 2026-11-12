@@ -348,3 +348,9 @@ header .actueel .oud-melding { display: inline-block; margin-left: .4rem; backgr
 .richtingknop { font: inherit; font-size: .75rem; padding: .1rem .5rem; border-radius: 6px; border: 1px solid var(--blauw-4); background: #fff; color: var(--tekst); cursor: pointer; }
 .richtingknop:hover { background: var(--blauw-5); }
 .richtingknop.aan { background: var(--blauw-2); border-color: var(--blauw-2); color: #fff; font-weight: 600; }
+
+/* Onderbouwing met citaten uit verkiezingsprogramma's */
+.citaat { display: block; margin-top: .2rem; font-size: .8rem; font-style: italic; color: var(--zacht); }
+.citaat a { font-style: normal; white-space: nowrap; }
+.badge.bron-ok { background: #dcf1e2; color: #1e7a3c; }
+.badge.bron-nee { background: #efefef; color: #777; font-weight: 500; }

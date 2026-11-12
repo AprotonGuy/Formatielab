@@ -32,7 +32,7 @@
     const rijen = [];
     leden.forEach((p) => {
       const s = standpunt(thema, p.id, namen);
-      if (s) rijen.push({ p, pos: s[0], prio: s[1], tekst: s[2] });
+      if (s) rijen.push({ p, pos: s[0], prio: s[1], tekst: s[2], bron: s[3] || null });
     });
     if (!rijen.length) return null;
 
@@ -193,7 +193,7 @@
     const rijen = a.rijen.slice().sort((x, y) => x.pos - y.pos || y.p.zetels - x.p.zetels).map((r) => `<tr>
         <td>${chip(r.p)}</td>
         <td class="getal">${r.p.zetels}</td>
-        <td>${r.tekst}</td>
+        <td>${r.tekst}${citaat(r, namen)}</td>
         <td class="klein">${positieTekst(a.thema, r.pos)}</td>
         <td>${prioStippen(r.prio)}</td>
       </tr>`).join('');
@@ -211,6 +211,7 @@
       <summary>
         <span class="pijl" aria-hidden="true">▸</span>
         <span class="rij-naam">${a.thema.naam}</span>
+        ${onderbouwingBadge(a.thema)}
         <span class="badge soort" title="${s.uitleg}">${s.label}</span>
         ${urgentieBadge(a.thema.urgentie)}
         <span class="rij-richting">${richtingKort(a)}</span>
@@ -247,6 +248,20 @@
     </details>`;
   }
 
+  // Citaat uit het verkiezingsprogramma met een link naar de juiste pagina.
+  function citaat(r, namen) {
+    if (!r.bron) return '';
+    const prog = namen(r.p.id).map((n) => (window.BRON_PROGRAMMAS || {})[n]).find(Boolean);
+    const pagina = prog ? `<a href="${prog.url}#page=${r.bron.p}" target="_blank" rel="noopener noreferrer" title="${prog.titel.replace(/"/g, '&quot;')}">p. ${r.bron.p}</a>` : `p. ${r.bron.p}`;
+    return `<span class="citaat">„${r.bron.c}” — programma 2025, ${pagina}</span>`;
+  }
+
+  function onderbouwingBadge(t) {
+    return t.onderbouwd
+      ? '<span class="badge bron-ok" title="Standpunten onderbouwd met citaten uit de verkiezingsprogramma\x27s 2025">Met bronnen</span>'
+      : '<span class="badge bron-nee" title="Standpunten zijn nog een inschatting, nog niet onderbouwd met citaten">Inschatting</span>';
+  }
+
   function link(b) {
     return `<a href="${b.url}" target="_blank" rel="noopener noreferrer">${b.titel}</a>`;
   }
@@ -278,8 +293,9 @@
           <ul>${algemeen}</ul>
         </div>
       </div>
-      <p class="klein verantwoording">Hoe dit tot stand kwam: de standpunten, posities en prioriteiten zijn vereenvoudigde
-        samenvattingen van de verkiezingsprogramma's van 2025, gemaakt door Claude (AI) en niet per regel nagelezen.
+      <p class="klein verantwoording">Hoe dit tot stand kwam: ${a.thema.onderbouwd
+          ? 'elk standpunt is onderbouwd met een letterlijk citaat uit het verkiezingsprogramma 2025 van de partij (klik op het paginanummer). Positie en prioriteit zijn daarop gebaseerd door Claude (AI); controleer ze gerust.'
+          : 'de standpunten, posities en prioriteiten zijn nog vereenvoudigde inschattingen door Claude (AI), nog niet onderbouwd met citaten.'}
         De urgentie is een inschatting op basis van het nieuws tot ${window.STANDPUNTEN_STAND || 'nu'}.
         Alles staat in <code>standpunten.js</code> en is daar aan te passen.</p>
     </details>`;

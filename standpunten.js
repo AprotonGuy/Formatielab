@@ -26,24 +26,28 @@ window.THEMAS = [
     rechts: 'veel strenger',
     urgentie: 3,
     reden: 'Overvolle azc\'s en protesten (o.a. Loosdrecht, Apeldoorn); het kabinet zette een "vliegend team" in. Het EU-migratiepact en het tweestatusstelsel moeten worden uitgevoerd.',
+    // ONDERBOUWD met de verkiezingsprogramma's 2025 (zie PROGRAMMAS onderaan). Vierde element: bron
+    // { p: paginanummer in de pdf, c: letterlijk citaat }. De prioriteit volgt uit hoe prominent het thema
+    // in het programma staat (eigen hoofdstuk, aantal passages). Uitgezocht door Claude (AI), nov. 2026.
+    onderbouwd: true,
     p: {
-      'SP':      [0,    1, 'Minder arbeidsmigratie, humane asielopvang'],
-      'PvdD':    [-1,   1, 'Humane opvang, oorzaken van vluchten aanpakken'],
-      'PRO':     [-1.5, 1, 'Humane opvang, spreidingswet, veilige routes'],
-      'DENK':    [-2,   2, 'Ruimhartige opvang, tegen strengere asielregels'],
-      'Volt':    [-1,   1, 'Europese aanpak, humane opvang'],
-      'D66':     [-0.5, 1, 'EU-asielpact uitvoeren, snelle en eerlijke procedures'],
-      '50PLUS':  [1,    1, 'Instroom beperken'],
-      'CU':      [0,    1, 'Grip op migratie, met barmhartige opvang'],
-      'CDA':     [1,    2, 'Meer grip op asiel en arbeidsmigratie, spreidingswet behouden'],
-      'NSC':     [1.5,  3, 'Migratiesaldo terug naar ca. 50.000 per jaar'],
-      'VVD':     [1.5,  3, 'Streng asielbeleid, tweestatusstelsel, minder instroom'],
-      'BBB':     [1.5,  2, 'Minder instroom, geen opvang tegen de wil van gemeenten'],
-      'SGP':     [1.5,  2, 'Asielinstroom fors beperken'],
-      'JA21':    [2,    3, 'Instroom naar minimum, opt-out van EU-asielregels'],
-      'PVV':     [2,    3, 'Asielstop, grenscontroles, geen nieuwe azc\'s'],
-      'FvD':     [2,    3, 'Asielstop en terugkeer'],
-      'DNA':     [2,    3, 'Asielstop, zeer streng migratiebeleid']
+      'SP':      [0.5,  2, 'Migratiesaldo van 40.000 per jaar, minder arbeidsmigratie', { p: 26, c: 'streven we naar een migratiesaldo van 40 duizend per jaar' }],
+      'PvdD':    [-2,   1, 'Veilige vluchtwegen, vluchtelingen op zee redden', { p: 133, c: 'het faciliteren van meer veilige en legale vluchtwegen en het gebruik van humanitaire doorgangen' }],
+      'PRO':     [-1.5, 2, 'EU-migratiepact uitvoeren, kritisch op strengere asielregels', { p: 109, c: 'We staan zeer kritisch tegenover de verruiming van de ‘Veiligederdelandenregeling’' }],
+      'DENK':    [-2,   2, 'Strenge asielwetten terugdraaien, humaan asielbeleid', { p: 17, c: 'De strenge asielwetten van de extreemrechtse regering gaan de prullenbak in.' }],
+      'Volt':    [-1.5, 2, 'Europese herverdeling, recht op gezinshereniging', { p: 78, c: 'Iedereen die recht heeft op asiel heeft het recht zich te herenigen met zijn of haar gezin' }],
+      'D66':     [-1,   1, 'Snel meedoen voor nieuwkomers, wettelijk kinderpardon', { p: 83, c: 'We stellen een wettelijk kinderpardon in' }],
+      '50PLUS':  [1.5,  2, 'Streng migratiebeleid, spreidingswet intrekken', { p: 11, c: '50PLUS kiest voor een streng migratiebeleid' }],
+      'CU':      [0.5,  1, 'Aanmelden buiten Europa, menswaardige opvang', { p: 41, c: 'We pleiten voor een systeem waarbij asielzoekers zich buiten Europa kunnen aanmelden.' }],
+      'CDA':     [1.5,  2, 'Instroom verminderen, steun voor asielnoodmaatregelen', { p: 84, c: 'Door duidelijk te zijn over wie kans maakt op asiel en wie niet, kunnen we de instroom verminderen.' }],
+      'NSC':     [1.5,  3, 'Streng en realistisch migratiebeleid, maximaal migratiesaldo', { p: 41, c: 'We staan voor een streng en realistisch migratiebeleid.' }],
+      'VVD':     [1.75, 3, 'Vluchtelingen alleen nog via hervestiging', { p: 62, c: 'vluchtelingen kunnen alleen nog via hervestiging naar Nederland komen' }],
+      'BBB':     [1.5,  2, 'Beheersbaar migratiebeleid, asielnoodmaatregelenwet invoeren', { p: 49, c: 'De Asielnoodmaatregelenwet invoeren.' }],
+      'SGP':     [1.5,  2, 'Begrensd asielbeleid, asiel is tijdelijk', { p: 34, c: 'De SGP wil daarom terug naar het uitgangspunt dat asiel van tijdelijke aard is.' }],
+      'JA21':    [2,    3, 'Forse instroombeperking, permanente grenscontroles', { p: 12, c: 'permanente grenscontroles aan de binnengrenzen' }],
+      'PVV':     [2,    3, 'Totale asielstop, grenzen dicht', { p: 8, c: 'Totale asielstop: alle asielzoekers worden aan de grens geweigerd' }],
+      'FvD':     [2,    3, 'Volledig stoppen met asielopvang, remigratie', { p: 8, c: 'We stoppen volledig met asielopvang in Nederland' }],
+      'DNA':     [2,    3, 'Afgeleid van de PVV (nog geen eigen programma)']
     }
   },
   {
@@ -323,28 +327,28 @@ window.THEMAS = [
 // ---------------------------------------------------------------------------
 // Waar komen de gegevens vandaan? Wordt in de app getoond onder "Bronnen" per thema.
 //
-// BRON_PROGRAMMAS: per partij waar je het verkiezingsprogramma vindt.
-// De samenvattingen hierboven zijn door Claude gemaakt op basis van de programma's van 2025
-// (zonder ze per regel na te slaan). Controleer ze dus zelf via deze links.
+// BRON_PROGRAMMAS: per partij het definitieve verkiezingsprogramma 2025 (archief DNPP, Rijksuniversiteit Groningen).
+// Thema's met "onderbouwd: true" hebben per partij een letterlijk citaat met paginanummer uit dit
+// programma. De andere thema's zijn nog inschattingen van Claude (AI) en moeten nog worden onderbouwd.
 window.BRON_PROGRAMMAS = {
-  'SP':      { titel: 'SP — website', url: 'https://www.sp.nl' },
-  'PvdD':    { titel: 'Partij voor de Dieren — website', url: 'https://www.partijvoordedieren.nl' },
-  'GL-PvdA': { titel: 'GroenLinks-PvdA — website (programma 2025)', url: 'https://groenlinks-pvda.nl' },
-  'PRO':     { titel: 'GroenLinks-PvdA (nu PRO) — website (programma 2025)', url: 'https://groenlinks-pvda.nl' },
-  'DENK':    { titel: 'DENK — website', url: 'https://www.bewegingdenk.nl' },
-  'Volt':    { titel: 'Volt — website', url: 'https://voltnederland.org' },
-  'D66':     { titel: 'D66 — website', url: 'https://d66.nl' },
-  '50PLUS':  { titel: '50PLUS — website', url: 'https://50pluspartij.nl' },
-  'CU':      { titel: 'ChristenUnie — website', url: 'https://www.christenunie.nl' },
-  'CDA':     { titel: 'CDA — website', url: 'https://www.cda.nl' },
-  'NSC':     { titel: 'NSC — website', url: 'https://partijnieuwsociaalcontract.nl' },
-  'VVD':     { titel: 'VVD — website', url: 'https://www.vvd.nl' },
-  'BBB':     { titel: 'BBB — website', url: 'https://boerburgerbeweging.nl' },
-  'SGP':     { titel: 'SGP — website', url: 'https://sgp.nl' },
-  'JA21':    { titel: 'JA21 — website', url: 'https://www.ja21.nl' },
-  'PVV':     { titel: 'PVV — website', url: 'https://www.pvv.nl' },
+  'SP':      { titel: 'SP — verkiezingsprogramma 2025 "Super sociaal"', url: 'https://dnpprepo.ub.rug.nl/88738/7/SP-verkiezingsprogramma-TK2025.pdf' },
+  'PvdD':    { titel: 'PvdD — verkiezingsprogramma 2025 "Natuurlijk."', url: 'https://dnpprepo.ub.rug.nl/88761/7/PvdD%20Verkiezingsprogramma%20TK%202025.pdf' },
+  'GL-PvdA': { titel: 'GroenLinks-PvdA — verkiezingsprogramma 2025 "Een nieuwe start voor Nederland"', url: 'https://dnpprepo.ub.rug.nl/88754/7/GL-PvdA%20Verkiezingsprogramma%20TK%202025-2029.pdf' },
+  'PRO':     { titel: 'GroenLinks-PvdA (nu PRO) — verkiezingsprogramma 2025 "Een nieuwe start voor Nederland"', url: 'https://dnpprepo.ub.rug.nl/88754/7/GL-PvdA%20Verkiezingsprogramma%20TK%202025-2029.pdf' },
+  'DENK':    { titel: 'DENK — verkiezingsprogramma 2025 "Nu is het moment meer dan ooit!"', url: 'https://dnpprepo.ub.rug.nl/88779/1/DENK%20Verkiezingsprogramma%20TK%202025.pdf' },
+  'Volt':    { titel: 'Volt — verkiezingsprogramma 2025 "Doe iets nieuws"', url: 'https://dnpprepo.ub.rug.nl/88740/13/Volt%20Verkiezingsprogramma%20TK%202025.pdf' },
+  'D66':     { titel: 'D66 — verkiezingsprogramma 2025 "Het kan wél"', url: 'https://dnpprepo.ub.rug.nl/88770/43/D66%20Verkiezingsprogramma%20TK%202025-2030.pdf' },
+  '50PLUS':  { titel: '50PLUS — verkiezingsprogramma 2025 "Wij doen mee"', url: 'https://dnpprepo.ub.rug.nl/88767/7/50PLUS%20Verkiezingsprogramma%202025-2029.pdf' },
+  'CU':      { titel: 'ChristenUnie — verkiezingsprogramma 2025 "Opstaan voor het goede"', url: 'https://dnpprepo.ub.rug.nl/88763/1/CU%20Verkiezingsprogramma%20TK%202025.pdf' },
+  'CDA':     { titel: 'CDA — verkiezingsprogramma 2025 "Bouwen op vertrouwen"', url: 'https://dnpprepo.ub.rug.nl/88765/7/CDA%20Verkiezingsprogramma%20TK%202025%20Definitief.pdf' },
+  'NSC':     { titel: 'NSC — verkiezingsprogramma 2025 "Zorgen voor zekerheid!"', url: 'https://dnpprepo.ub.rug.nl/88758/7/NSC%20Verkiezingsprogramma%20TK%202025%20definitief.pdf' },
+  'VVD':     { titel: 'VVD — verkiezingsprogramma 2025 "Sterker uit de storm"', url: 'https://dnpprepo.ub.rug.nl/88735/1/VVD%20Verkiezingsprogramma%20TK%202025.pdf' },
+  'BBB':     { titel: 'BBB — verkiezingsprogramma 2025 "BBB levert"', url: 'https://dnpprepo.ub.rug.nl/88739/7/BBB%20Verkiezingsprogramma%20TK2025.pdf' },
+  'SGP':     { titel: 'SGP — verkiezingsprogramma 2025 "Stem christelijk voor Nederland"', url: 'https://dnpprepo.ub.rug.nl/88768/7/SGP%20Verkiezingsprogramma%20TK%202025-2029.pdf' },
+  'JA21':    { titel: 'JA21 — verkiezingsprogramma 2025 "De juiste aanpak voor Nederland"', url: 'https://dnpprepo.ub.rug.nl/88762/7/JA21%20Verkiezingsprogramma%20TK%202025%20definitief.pdf' },
+  'PVV':     { titel: 'PVV — verkiezingsprogramma 2025 "Dit is uw land!"', url: 'https://dnpprepo.ub.rug.nl/88766/1/PVV%20Verkiezingsprogramma%20TK%202025.pdf' },
   'DNA':     { titel: 'Groep Markuszower begint nieuwe partij (Welingelichte Kringen) — nog geen programma', url: 'https://www.welingelichtekringen.nl/samenleving/groep-markuszower-begint-nieuwe-partij-verdonk-sluit-zich-aan' },
-  'FvD':     { titel: 'FvD — website', url: 'https://fvd.nl' }
+  'FvD':     { titel: 'FvD — verkiezingsprogramma 2025 "Een nieuwe kans voor Nederland"', url: 'https://dnpprepo.ub.rug.nl/88769/1/FVD%20Verkiezingsprogramma%20TK%202025.pdf' }
 };
 
 // Algemene bron voor alle verkiezingsprogramma's (archief van het DNPP, Rijksuniversiteit Groningen).
