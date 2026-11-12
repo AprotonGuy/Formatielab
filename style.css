@@ -435,3 +435,16 @@ header.kop .sub { margin: .45rem auto 0; max-width: 46rem; color: var(--blauw-1)
 .menu-links { list-style: none; margin: 1rem 0 0; padding: .8rem 0 0; border-top: 1px solid rgba(255,255,255,.25); display: grid; gap: .35rem; }
 .menu-links a { color: #fff; font-weight: 600; text-decoration: none; }
 .menu-links a:hover { text-decoration: underline; }
+
+/* Effect op Nederland (kerncijfers per kabinet) */
+.hist-effect { margin-bottom: .6rem; }
+.eff-uitleg { margin: .3rem .6rem !important; }
+.eff-scroll { overflow-x: auto; margin: .3rem .6rem; }
+.eff-tabel { border-collapse: collapse; font-size: .85rem; min-width: 100%; }
+.eff-tabel th, .eff-tabel td { padding: .3rem .5rem; border-bottom: 1px solid var(--lijn-licht); white-space: nowrap; }
+.eff-tabel thead th { color: var(--zacht); font-weight: 600; font-size: .78rem; }
+.eff-tabel tbody th { text-align: left; font-weight: 600; cursor: help; }
+.eff-tabel .getal { text-align: right; font-variant-numeric: tabular-nums; }
+.eff-beter { color: #1e7a3c; font-weight: 600; }
+.eff-slechter { color: #b3261e; font-weight: 600; }
+.eff-neutraal { color: var(--zacht); font-weight: 600; }

@@ -119,6 +119,7 @@
           <li><strong>Einde:</strong> ${k.einde}</li>
           ${verschil.length ? `<li><strong>Verschil met jouw coalitie:</strong> ${verschil.join('; ')}</li>` : ''}
         </ul>
+        ${effectBlok(k)}
         ${officieelBlok(k)}
         <div class="hist-kop"><span>Thema</span><span>Wat dit kabinet echt deed</span><span>Verwachting voor jouw coalitie</span></div>
         <div class="hist-themas">${themaRijen}</div>
@@ -130,6 +131,69 @@
 
   function ankerLink(url, titel) {
     return `<a href="${url}" target="_blank" rel="noopener noreferrer">${titel}</a>`;
+  }
+
+  // ---------- Effect op Nederland: officiële kerncijfers tijdens de kabinetsperiode ----------
+  function getal(w, ind) {
+    if (w === undefined || w === null) return '–';
+    return w.toLocaleString('nl-NL', { minimumFractionDigits: ind.decimalen, maximumFractionDigits: ind.decimalen });
+  }
+
+  function effectBlok(k) {
+    const K = window.KERNCIJFERS;
+    if (!K || !K.indicatoren.length) return '';
+    const eersteJaar = Number(k.start.slice(0, 4)) - 1;            // het jaar vóór het aantreden als vertrekpunt
+    const laatsteJaar = k.eind ? Number(k.eind.slice(0, 4)) : new Date().getFullYear();
+    const jaren = [];
+    for (let j = eersteJaar; j <= laatsteJaar; j++) jaren.push(String(j));
+    // Alleen jaren waarvoor ten minste één cijfer bestaat.
+    const metData = jaren.filter((j) => K.indicatoren.some((ind) => ind.jaren[j] !== undefined));
+    if (metData.length < 2) return '';
+
+    const rijen = K.indicatoren.map((ind) => {
+      const waarden = metData.map((j) => ind.jaren[j]);
+      const bekend = metData.filter((j) => ind.jaren[j] !== undefined);
+      let verandering = '<span class="klein">–</span>';
+      if (bekend.length >= 2) {
+        const van = ind.jaren[bekend[0]];
+        const naar = ind.jaren[bekend[bekend.length - 1]];
+        const d = naar - van;
+        const pijl = Math.abs(d) < Math.pow(10, -ind.decimalen) ? '→' : (d > 0 ? '▲' : '▼');
+        let klasse = 'neutraal';
+        if (ind.beter && pijl !== '→') klasse = (d > 0) === (ind.beter === 'hoog') ? 'beter' : 'slechter';
+        const tekst = ind.eenheid === '%' || ind.eenheid === '% bbp'
+          ? `${d > 0 ? '+' : ''}${getal(Math.round(d * 10) / 10, { decimalen: 1 })} procentpunt`
+          : `${d > 0 ? '+' : ''}${getal(Math.round((d / van) * 1000) / 10, { decimalen: 1 })}%`;
+        verandering = `<span class="eff-${klasse}" title="Van ${bekend[0]} naar ${bekend[bekend.length - 1]}">${pijl} ${tekst}</span>`;
+      }
+      return `<tr>
+        <th scope="row" title="${ind.uitleg}">${ind.naam} <span class="klein">(${ind.eenheid})</span></th>
+        ${waarden.map((w) => `<td class="getal">${getal(w, ind)}</td>`).join('')}
+        <td class="getal">${verandering}</td>
+      </tr>`;
+    }).join('');
+
+    const bronnen = [...new Map(K.indicatoren.map((i) => [i.url, i])).values()]
+      .map((i) => `<li>${ankerLink(i.url, `${i.naam}: ${i.bron}`)}</li>`).join('');
+
+    return `<details class="bronnen hist-effect">
+      <summary>Effect op Nederland (officiële cijfers)</summary>
+      <p class="klein eff-uitleg">Hoe Nederland zich ontwikkelde tijdens dit kabinet, van het jaar vóór het aantreden (${eersteJaar})
+        tot ${k.eind ? `het jaar van aftreden (${laatsteJaar})` : 'nu'}. <strong>Let op:</strong> deze cijfers bewijzen niet dat het kabinet de
+        ontwikkeling veroorzaakte. Ook de wereldeconomie, crises (zoals de kredietcrisis, corona of de oorlog in Oekraïne)
+        en besluiten van eerdere kabinetten spelen mee.</p>
+      <div class="eff-scroll">
+        <table class="eff-tabel">
+          <thead><tr><th></th>${metData.map((j) => `<th class="getal">${j}</th>`).join('')}<th class="getal">Verandering</th></tr></thead>
+          <tbody>${rijen}</tbody>
+        </table>
+      </div>
+      <p class="klein eff-uitleg">Groen of rood alleen waar "beter" duidelijk is (bijvoorbeeld lagere werkloosheid); inflatie en asiel
+        zijn grijs, omdat hoger of lager geen oordeel is. Recente jaren kunnen nog voorlopig zijn. Een streepje betekent: geen
+        officieel cijfer voor dat jaar.</p>
+      <ul class="bronnen-lijst klein">${bronnen}</ul>
+      <p class="klein eff-uitleg">Opgehaald op ${K.opgehaald}.</p>
+    </details>`;
   }
 
   // Officiële bronnen: formatiedossier (Kamerstukken), Nationaal Archief en openbaarheid van de notulen.
