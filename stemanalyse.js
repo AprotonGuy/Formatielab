@@ -218,7 +218,7 @@
         stemming is perfect ingedeeld. Bijwerken: draai <code>stemgedrag-ophalen.ps1</code>.</p>`;
   }
 
-  // Korte regel voor de themakaarten in "Wat gaat deze coalitie waarschijnlijk doen?".
+  // Korte regel voor de themakaarten in "Waarschijnlijke koers".
   function themaRegel(themaId, leden, namen) {
     const k = voorbereiden();
     if (!k || leden.length < 2) return '';

@@ -297,7 +297,7 @@
   function teken({ container, uitleg, leden, alle, namen, chip, stand }) {
     alle = alle || leden;
     uitleg.textContent = `Op basis van vereenvoudigde standpunten (verkiezingsprogramma's 2025) en het nieuws tot ${stand || 'nu'}. ` +
-      'Grotere partijen wegen zwaarder mee. Dit is een inschatting, geen voorspelling.';
+      'Grotere partijen wegen zwaarder mee. Dit is een inschatting: tijdens de formatie kan de koers nog flink veranderen.';
     if (!THEMAS.length) {
       container.innerHTML = '<p class="klein">Geen standpunten gevonden (standpunten.js ontbreekt).</p>';
       return;
