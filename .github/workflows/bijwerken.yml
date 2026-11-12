@@ -1,4 +1,4 @@
-# Formatielab: elke dag de nieuwste peilingen en stemmingen ophalen en de website publiceren.
+# FormatieLab: elke dag de nieuwste peilingen en stemmingen ophalen en de website publiceren.
 name: Bijwerken en publiceren
 
 on:
@@ -7,6 +7,11 @@ on:
   push:
     branches: [main]       # na elke wijziging in de code ook meteen publiceren
   workflow_dispatch:       # handmatig starten via het tabblad Actions
+    inputs:
+      hartslag:
+        description: 'Test: maak nu een hartslag-commit (normaal pas na 45 dagen stilte)'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -42,3 +47,39 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # GitHub zet geplande workflows in openbare repositories uit na 60 dagen zonder activiteit.
+  # Deze job voorkomt dat, los van of het ophalen lukt:
+  #  1. hij zet de workflow elke dag opnieuw "aan" via de GitHub-API (reset de teller);
+  #  2. is er 45 dagen niets gecommit, dan maakt hij een kleine hartslag-commit als extra zekerheid.
+  actief-houden:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Workflow actief houden
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/bijwerken.yml/enable"
+
+      - name: Hartslag-commit bij lange stilte
+        env:
+          FORCEER: ${{ github.event.inputs.hartslag }}
+        run: |
+          laatste=$(git log -1 --format=%ct)
+          dagen=$(( ( $(date +%s) - laatste ) / 86400 ))
+          echo "Laatste commit: $dagen dagen geleden"
+          if [ "$dagen" -ge 45 ] || [ "$FORCEER" = "true" ]; then
+            date -u +%F > .github/laatste-hartslag.txt
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .github/laatste-hartslag.txt
+            git commit -m "Hartslag: automatische update actief houden"
+            git push
+          else
+            echo "Geen hartslag nodig."
+          fi
