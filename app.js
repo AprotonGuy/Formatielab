@@ -14,7 +14,7 @@
     aangepast: {},      // { scenarioId: { partijId: zetels } }
     gekozen: [],
     uitgesloten: [],
-    filters: { minimaal: true, metSelectie: true, ookEK: false, maxPartijen: 0, sorteer: 'krap', themas: [] }
+    filters: { minimaal: true, metSelectie: true, ookEK: false, maxPartijen: 0, sorteer: 'krap', themas: [], richting: {} }
   };
   const state = laden();
 
@@ -234,20 +234,33 @@
   //   belang         (45%) hoe belangrijk de partijen het thema vinden (standpunten.js)
   //   eensgezindheid (30%) hoe dicht hun standpunten bij elkaar liggen (standpunten.js)
   //   stemgedrag     (25%) hoe vaak ze in de Kamer echt hetzelfde stemden over dit thema (stemgedrag.js)
-  // Zonder stemdata tellen alleen de eerste twee (naar verhouding).
+  // Zonder stemdata tellen alleen de eerste twee (naar verhouding). Dat heet hier "daadkracht".
+  //
+  // Kiest de gebruiker ook een richting (bv. "veel strenger"), dan telt die zwaar mee:
+  //   score = richting x (50% + 50% x daadkracht)
+  // richting = 100% als de coalitiekoers helemaal die kant op gaat, 50% bij een middenkoers, 0% bij de andere kant.
+  // Een coalitie die precies de andere kant op wil, scoort dus 0, hoe daadkrachtig ook.
   const GEWICHT = { belang: 0.45, eens: 0.30, stem: 0.25 };
-  function themaScore(thema, leden) {
+  function themaScore(thema, leden, richting) {
     const a = window.CoalitieAnalyse ? window.CoalitieAnalyse.analyseer(thema, leden, namen) : null;
     if (!a) return { thema, score: 0, uitleg: `${thema.naam}: geen standpunten bekend` };
     const belang = a.belang / 3;
     const eens = Math.max(0, 1 - a.conflict / 4);
     const stem = window.CoalitieStemgedrag ? window.CoalitieStemgedrag.eensgezindheid(thema.id, leden, namen) : null;
-    let score;
-    if (stem) score = 100 * (GEWICHT.belang * belang + GEWICHT.eens * eens + GEWICHT.stem * stem.pct / 100);
-    else score = 100 * (GEWICHT.belang * belang + GEWICHT.eens * eens) / (GEWICHT.belang + GEWICHT.eens);
-    const uitleg = `${thema.naam}: belang ${a.belang.toFixed(1)}/3, standpunten ${Math.round(eens * 100)}% eensgezind` +
+    let daadkracht;
+    if (stem) daadkracht = GEWICHT.belang * belang + GEWICHT.eens * eens + GEWICHT.stem * stem.pct / 100;
+    else daadkracht = (GEWICHT.belang * belang + GEWICHT.eens * eens) / (GEWICHT.belang + GEWICHT.eens);
+    let score = 100 * daadkracht;
+    let uitleg = `${thema.naam}: belang ${a.belang.toFixed(1)}/3, standpunten ${Math.round(eens * 100)}% eensgezind` +
       (stem ? `, in de Kamer ${stem.pct}% gelijk gestemd (${stem.n} stemmingen)` : ', geen stemdata');
-    return { thema, score, uitleg };
+    if (richting) {
+      const passend = Math.max(0, Math.min(1, (a.koers * richting + 2) / 4));
+      score = 100 * passend * (0.5 + 0.5 * daadkracht);
+      const kant = richting < 0 ? thema.links : thema.rechts;
+      uitleg += `. Jouw richting „${kant}”: koers past ${Math.round(passend * 100)}%` +
+        ` (${Math.abs(a.koers) < 0.5 ? 'middenkoers' : `richting „${a.koers < 0 ? thema.links : thema.rechts}”`})`;
+    }
+    return { thema, score, uitleg, richting };
   }
   function scoreKlasse(s) { return s >= 70 ? 'score-hoog' : s >= 50 ? 'score-midden' : 'score-laag'; }
 
@@ -259,6 +272,16 @@
       const aan = f.themas.includes(t.id);
       const vol = !aan && f.themas.length >= 3;
       return `<button type="button" class="themaknop${aan ? ' aan' : ''}" data-thema="${t.id}" aria-pressed="${aan}"${vol ? ' disabled title="Je kunt maximaal 3 thema\'s kiezen"' : ''}>${t.naam}</button>`;
+    }).join('');
+
+    // Per gekozen thema: welke kant wil jij op?
+    f.richting = f.richting || {};
+    $('f-richting').innerHTML = (window.THEMAS || []).filter((t) => f.themas.includes(t.id)).map((t) => {
+      const r = f.richting[t.id] || 0;
+      const knop = (waarde, tekst) => `<button type="button" class="richtingknop${r === waarde ? ' aan' : ''}"
+        data-thema="${t.id}" data-richting="${waarde}" aria-pressed="${r === waarde}">${tekst}</button>`;
+      return `<div class="richtingrij"><span class="richting-naam">${t.naam}:</span>
+        ${knop(-1, `◀ ${t.links}`)}${knop(0, 'maakt niet uit')}${knop(1, `${t.rechts} ▶`)}</div>`;
     }).join('');
   }
 
@@ -309,7 +332,7 @@
     if (gekozenThemas.length) {
       res.forEach((c) => {
         const leden = kandidaten.filter((_, i) => c.m & (1 << i));
-        c.themaScores = gekozenThemas.map((t) => themaScore(t, leden));
+        c.themaScores = gekozenThemas.map((t) => themaScore(t, leden, (f.richting || {})[t.id] || 0));
         c.score = c.themaScores.reduce((a, x) => a + x.score, 0) / c.themaScores.length;
       });
     }
@@ -338,7 +361,7 @@
         <span class="cijfers"><strong>${c.s}</strong> zetels<br>${EERSTE_KAMER
           ? `<span class="${c.ek >= ekNodig ? 'ek-ok' : 'ek-nee'}" title="Zetels in de Eerste Kamer (${ekNodig} nodig)">EK ${c.ek} ${c.ek >= ekNodig ? '✓' : '✗'}</span> · `
           : ''}${c.aantal} partijen</span>
-        ${c.themaScores ? `<span class="themascores">${c.themaScores.map((x) => `<span class="themascore ${scoreKlasse(x.score)}" title="${x.uitleg}">${x.thema.naam.split(' ')[0]} <strong>${Math.round(x.score)}</strong></span>`).join('')}</span>` : ''}
+        ${c.themaScores ? `<span class="themascores">${c.themaScores.map((x) => `<span class="themascore ${scoreKlasse(x.score)}" title="${x.uitleg}">${x.thema.naam.split(' ')[0]}${x.richting ? (x.richting < 0 ? ' ◀' : ' ▶') : ''} <strong>${Math.round(x.score)}</strong></span>`).join('')}</span>` : ''}
       </button></li>`;
     }).join('');
   }
@@ -485,6 +508,13 @@
       if (f.themas.length) f.sorteer = 'thema';
       else if (f.sorteer === 'thema') f.sorteer = 'krap';
       fSort.value = f.sorteer;
+      render();
+    });
+    $('f-richting').addEventListener('click', (e) => {
+      const knop = e.target.closest('.richtingknop');
+      if (!knop) return;
+      f.richting = f.richting || {};
+      f.richting[knop.dataset.thema] = parseInt(knop.dataset.richting, 10);
       render();
     });
   }

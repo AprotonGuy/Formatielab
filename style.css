@@ -340,3 +340,11 @@ header .actueel .oud-melding { display: inline-block; margin-left: .4rem; backgr
 .themascore.score-hoog { background: #dcf1e2; color: #1e7a3c; }
 .themascore.score-midden { background: #fbefd2; color: #8a5d00; }
 .themascore.score-laag { background: #f8dcda; color: #b3261e; }
+
+/* Richting per gekozen thema */
+.richtingen { display: grid; gap: .3rem; margin-top: .4rem; }
+.richtingrij { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; font-size: .8rem; }
+.richting-naam { font-weight: 600; margin-right: .2rem; }
+.richtingknop { font: inherit; font-size: .75rem; padding: .1rem .5rem; border-radius: 6px; border: 1px solid var(--blauw-4); background: #fff; color: var(--tekst); cursor: pointer; }
+.richtingknop:hover { background: var(--blauw-5); }
+.richtingknop.aan { background: var(--blauw-2); border-color: var(--blauw-2); color: #fff; font-weight: 600; }
