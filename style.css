@@ -448,3 +448,27 @@ header.kop .sub { margin: .45rem auto 0; max-width: 46rem; color: var(--blauw-1)
 .eff-beter { color: #1e7a3c; font-weight: 600; }
 .eff-slechter { color: #b3261e; font-weight: 600; }
 .eff-neutraal { color: var(--zacht); font-weight: 600; }
+
+/* Lab-knop: zetels alleen aanpasbaar als het Lab aan staat */
+.labknop {
+  display: inline-flex; align-items: center; gap: .3rem; flex: none;
+  font: inherit; font-weight: 700; font-size: .85rem; cursor: pointer;
+  padding: .25rem .6rem .25rem .45rem; border-radius: 999px;
+  border: 2px solid var(--blauw-3); background: #fff; color: var(--blauw-1);
+}
+.labknop:hover { background: var(--blauw-5); }
+.labknop.aan { background: var(--blauw-1); border-color: var(--blauw-1); color: #fff; }
+.labknop:focus-visible { outline: 3px solid var(--blauw-2); outline-offset: 2px; }
+.labuitleg { margin: .5rem 0 0; font-size: .82rem; background: var(--blauw-5); color: var(--blauw-1); border-radius: 8px; padding: .35rem .6rem; font-weight: 600; }
+
+/* Zetels vast (Lab uit): gewoon een getal, geen invoerveld */
+#partijen input.zetels[readonly] {
+  border-color: transparent; background: transparent; cursor: default; font-weight: 600; color: var(--tekst);
+  -moz-appearance: textfield; appearance: textfield;
+}
+#partijen input.zetels[readonly]::-webkit-inner-spin-button,
+#partijen input.zetels[readonly]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+#partijen input.zetels[readonly]:focus { outline: none; }
+/* Lab aan: duidelijk bewerkbaar */
+.lab-aan #partijen input.zetels { border: 1px solid var(--blauw-2); background: #fff; }
+#partijen input.zetels.gewijzigd { color: #8a5d00; background: #fff3d6; border-color: #e0b44c; font-weight: 700; }

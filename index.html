@@ -38,6 +38,10 @@
       <div class="regel">
         <label for="scenario">Scenario</label>
         <select id="scenario"></select>
+        <button type="button" class="labknop" id="labknop" aria-pressed="false" title="Lab: zetels zelf aanpassen">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 2.5h6M10 2.5v6.2L4.6 18.4A2 2 0 0 0 6.4 21.5h11.2a2 2 0 0 0 1.8-3.1L14 8.7V2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.2 15h9.6l2 3.4a.9.9 0 0 1-.8 1.3H6a.9.9 0 0 1-.8-1.3z" fill="currentColor" opacity=".55"/><circle cx="11" cy="17.3" r=".9" fill="#fff"/><circle cx="13.6" cy="16.2" r=".6" fill="#fff"/></svg>
+          <span class="labtekst">Lab</span>
+        </button>
       </div>
       <p id="scenario-bron" class="klein"></p>
       <table id="partijen">
@@ -46,6 +50,7 @@
         </thead>
         <tbody></tbody>
       </table>
+      <p class="labuitleg" id="labuitleg" hidden>Lab staat aan: pas de zetels aan en zie direct welke meerderheden er ontstaan of verdwijnen.</p>
       <p id="totaal" class="klein"></p>
       <button type="button" id="herstel" class="link">Zetels terugzetten naar bron</button>
     </section>

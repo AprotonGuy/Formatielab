@@ -17,6 +17,7 @@
     aangepast: {},      // { scenarioId: { partijId: zetels } }
     gekozen: [],
     uitgesloten: [],
+    lab: false,         // Lab-modus: zetels zelf aanpassen
     filters: { minimaal: true, metSelectie: true, ookEK: false, maxPartijen: 0, sorteer: 'krap', themas: [], richting: {} }
   };
   const state = laden();
@@ -104,7 +105,9 @@
       return `
       <tr data-id="${p.id}">
         <td><span class="stip" style="background:${p.kleur}"></span><span class="naam" title="${p.naam}">${p.kort}</span></td>
-        <td class="zetelcel"><input type="number" class="zetels" min="0" max="150" step="1" value="${p.zetels}" aria-label="Zetels ${p.naam}">${marge}</td>
+        <td class="zetelcel"><input type="number" class="zetels${p.zetels !== p.basis ? ' gewijzigd' : ''}" min="0" max="150" step="1" value="${p.zetels}"
+          aria-label="Zetels ${p.naam}"${state.lab ? '' : ' readonly tabindex="-1"'}
+          title="${state.lab ? 'Pas het aantal zetels aan' : 'Zet het Lab aan om zetels aan te passen'}${p.zetels !== p.basis ? ` (bron: ${p.basis})` : ''}">${marge}</td>
         <td><input type="checkbox" class="kies" aria-label="${p.naam} in coalitie"></td>
         <td><button type="button" class="sluit" aria-pressed="false" aria-label="${p.naam} uitsluiten" title="Uitsluiten">✕</button></td>
       </tr>`;
@@ -370,8 +373,25 @@
   }
 
   // ---------- alles tekenen ----------
+  // Lab-knop, uitleg en "terugzetten" in de juiste stand; aangepaste zetels markeren.
+  function tekenLab(lijst) {
+    const knop = $('labknop');
+    knop.classList.toggle('aan', state.lab);
+    knop.setAttribute('aria-pressed', String(state.lab));
+    knop.title = state.lab ? 'Lab staat aan: klik om zetels weer vast te zetten' : 'Lab: zetels zelf aanpassen';
+    $('labuitleg').hidden = !state.lab;
+    document.getElementById('paneel-partijen').classList.toggle('lab-aan', state.lab);
+    const aangepast = lijst.some((p) => p.zetels !== p.basis);
+    $('herstel').hidden = !aangepast;
+    lijst.forEach((p) => {
+      const input = document.querySelector(`#partijen tr[data-id="${CSS.escape(p.id)}"] .zetels`);
+      if (input) input.classList.toggle('gewijzigd', p.zetels !== p.basis);
+    });
+  }
+
   function render() {
     const lijst = partijLijst();
+    tekenLab(lijst);
     const ids = new Set(lijst.map((p) => p.id));
     state.gekozen = state.gekozen.filter((id) => ids.has(id));
     state.uitgesloten = state.uitgesloten.filter((id) => ids.has(id));
@@ -477,6 +497,13 @@
 
     $('herstel').addEventListener('click', () => {
       delete state.aangepast[scenario().id];
+      bouwTabel();
+      render();
+    });
+
+    // Lab-knop: zetels wel of niet zelf aanpassen.
+    $('labknop').addEventListener('click', () => {
+      state.lab = !state.lab;
       bouwTabel();
       render();
     });
