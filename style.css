@@ -1,3 +1,20 @@
+/* Lettertype: Source Sans 3 (Adobe, SIL Open Font License 1.1, zie fonts/SourceSans3-LICENSE.md).
+   Variabel font: alle gewichten van 200 t/m 900 in één bestand. */
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('fonts/SourceSans3VF-Upright.ttf.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('fonts/SourceSans3VF-Italic.ttf.woff2') format('woff2');
+  font-weight: 200 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
   /* Kleurenpalet (van donker naar licht) */
   --blauw-1: #4D7298;
@@ -16,7 +33,7 @@
   --accent: var(--blauw-1);
   --goed: #1e7a3c;
   --fout: #b3261e;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color: var(--tekst);
   background: var(--achtergrond);
 }
