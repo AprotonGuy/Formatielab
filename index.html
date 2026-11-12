@@ -64,30 +64,29 @@
     </section>
   </main>
 
-  <section class="paneel" id="paneel-analyse">
-    <details class="sectie" data-sectie="analyse" open>
-      <summary><h2>Waarschijnlijke koers</h2><span class="sectie-hint"></span></summary>
+  <section class="tabs" id="paneel-tabs">
+    <div class="tabbalk" role="tablist" aria-label="Analyse van de gekozen coalitie">
+      <button type="button" class="tab" role="tab" id="tab-analyse" aria-controls="paneel-analyse" data-tab="analyse">Waarschijnlijke koers van deze coalitie</button>
+      <button type="button" class="tab" role="tab" id="tab-stemgedrag" aria-controls="paneel-stemgedrag" data-tab="stemgedrag">Echt stemgedrag in de Tweede Kamer</button>
+      <button type="button" class="tab" role="tab" id="tab-historie" aria-controls="paneel-historie" data-tab="historie">Vergelijk met eerdere kabinetten</button>
+    </div>
+
+    <div class="tabpaneel" role="tabpanel" id="paneel-analyse" aria-labelledby="tab-analyse">
       <p class="klein" id="analyse-uitleg"></p>
       <div id="analyse"></div>
-    </details>
-  </section>
+    </div>
 
-  <section class="paneel" id="paneel-stemgedrag">
-    <details class="sectie" data-sectie="stemgedrag" open>
-      <summary><h2>Echt stemgedrag in de Tweede Kamer</h2><span class="sectie-hint"></span></summary>
+    <div class="tabpaneel" role="tabpanel" id="paneel-stemgedrag" aria-labelledby="tab-stemgedrag">
       <p class="klein">Hoe vaak stemden deze partijen echt hetzelfde over moties, amendementen en wetten? Gebaseerd op alle
         stemmingen in de huidige Tweede Kamer, niet op inschattingen.</p>
       <div id="stemgedrag"></div>
-    </details>
-  </section>
+    </div>
 
-  <section class="paneel" id="paneel-historie">
-    <details class="sectie" data-sectie="historie" open>
-      <summary><h2>Vergelijk met eerdere kabinetten</h2><span class="sectie-hint"></span></summary>
+    <div class="tabpaneel" role="tabpanel" id="paneel-historie" aria-labelledby="tab-historie">
       <p class="klein">Welke echte kabinetten sinds 2002 hadden (deels) dezelfde partijen, hoe lang hielden ze het vol,
         en wat deden ze echt per thema? Naast elkaar met de verwachting voor jouw coalitie.</p>
       <div id="historie"></div>
-    </details>
+    </div>
   </section>
 
   <footer class="klein">
@@ -107,12 +106,29 @@
   <script src="app.js"></script>
   <script src="actueel.js"></script>
   <script>
-    // Onthoud welke secties ingeklapt zijn.
-    document.querySelectorAll('details.sectie').forEach(function (d) {
-      var sleutel = 'coalitiewijzer-sectie-' + d.dataset.sectie;
-      if (localStorage.getItem(sleutel) === 'dicht') d.open = false;
-      d.addEventListener('toggle', function () { localStorage.setItem(sleutel, d.open ? 'open' : 'dicht'); });
-    });
+    // Tabbladen: klik op een tab om die te openen; klik op de open tab om alles in te klappen.
+    // De keuze wordt onthouden.
+    (function () {
+      var SLEUTEL = 'formatielab-tab';
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('.tabbalk .tab'));
+      function toon(naam) {
+        tabs.forEach(function (t) {
+          var actief = t.dataset.tab === naam;
+          t.classList.toggle('actief', actief);
+          t.setAttribute('aria-selected', actief ? 'true' : 'false');
+          document.getElementById(t.getAttribute('aria-controls')).hidden = !actief;
+        });
+        document.getElementById('paneel-tabs').classList.toggle('ingeklapt', !naam);
+        localStorage.setItem(SLEUTEL, naam || 'dicht');
+      }
+      tabs.forEach(function (t) {
+        t.addEventListener('click', function () {
+          toon(t.classList.contains('actief') ? '' : t.dataset.tab);
+        });
+      });
+      var bewaard = localStorage.getItem(SLEUTEL);
+      toon(bewaard === 'dicht' ? '' : (tabs.some(function (t) { return t.dataset.tab === bewaard; }) ? bewaard : 'analyse'));
+    })();
   </script>
 </body>
 </html>

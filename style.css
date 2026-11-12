@@ -294,3 +294,25 @@ details.sectie > summary:hover h2 { text-decoration: underline; }
 header .actueel { margin: .45rem 0 0; font-size: .8rem; color: var(--blauw-5); }
 header .actueel span.oud { text-decoration: underline wavy #ffd58a; }
 header .actueel .oud-melding { display: inline-block; margin-left: .4rem; background: #fff3d6; color: #8a5d00; padding: .05rem .45rem; border-radius: 999px; }
+
+/* Tabbladen onder de kamer: koers / stemgedrag / eerdere kabinetten */
+.tabs { margin-top: 1rem; }
+.tabbalk { display: flex; flex-wrap: wrap; gap: .35rem; align-items: flex-end; padding: .4rem .4rem 0; background: var(--blauw-2); border-radius: 12px 12px 0 0; }
+.tab {
+  font: inherit; font-weight: 700; font-size: 1.05rem; cursor: pointer;
+  border: none; border-radius: 10px 10px 0 0; padding: .6rem 1.1rem;
+  background: var(--blauw-4); color: #fff; display: flex; align-items: center; gap: .5rem;
+}
+.tab::before { content: '▼'; font-size: .8rem; opacity: .9; }
+.tab:hover { background: var(--blauw-3); }
+.tab.actief { background: var(--blauw-1); color: #fff; font-size: 1.15rem; padding: .75rem 1.3rem; }
+.tab.actief::before { content: none; }
+.tab:focus-visible { outline: 3px solid #fff; outline-offset: -3px; }
+.tabpaneel { background: var(--paneel); border: 3px solid var(--blauw-1); border-top: 6px solid var(--blauw-1); border-radius: 0 0 12px 12px; padding: 1rem; }
+.tabs.ingeklapt .tabbalk { border-radius: 12px; padding-bottom: .4rem; }
+.tabs.ingeklapt .tab { border-radius: 10px; }
+#paneel-analyse, #paneel-stemgedrag, #paneel-historie { margin-top: 0; }
+@media (max-width: 760px) {
+  .tab, .tab.actief { font-size: .95rem; padding: .5rem .8rem; flex: 1 1 100%; border-radius: 8px; }
+  .tabbalk { padding-bottom: .4rem; }
+}
