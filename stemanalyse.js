@@ -27,7 +27,7 @@
       const tekst = `${DATA.titels[r[3]] || ''} ${r[4]}`;
       const themas = Object.keys(regex).filter((id) => regex[id].test(tekst));
       return { datum: r[0], soort: r[1], aangenomen: r[2] === 1, titel: DATA.titels[r[3]] || '', onderwerp: r[4],
-        nummer: r[5], stemmen: r[6], themas };
+        nummer: r[5], stemmen: r[6], indiener: r[7] || "", mede: r[8] ? r[8].split(",") : [], themas };
     });
     const index = {};
     DATA.fracties.forEach((f, i) => { index[f] = i; });
@@ -141,12 +141,33 @@
     return `<span class="sg-voor">voor: ${voor || '—'}</span> <span class="sg-tegen">tegen: ${tegen || '—'}</span>`;
   }
 
+  // Chip voor een fractie-id uit de open data (ook voor fracties die niet in data.js staan).
+  function fractieChip(id, chip) {
+    const p = (window.PARTIJEN || {})[id];
+    return p ? chip(p) : `<span class="chip" style="background:#888">${id}</span>`;
+  }
+
+  // "Motie van het lid X c.s. over Y" -> "Over Y" (de indiener staat al in de kop).
+  function korteTitel(onderwerp) {
+    const m = onderwerp.match(/^(?:Gewijzigde |Nader gewijzigde )?(?:motie|amendement)[^]*?\bover\s+(.*)$/i);
+    return m ? m[1].charAt(0).toUpperCase() + m[1].slice(1) : onderwerp;
+  }
+
   function voorbeeld(x, chip) {
     const s = x.s;
     const soort = { M: 'Motie', A: 'Amendement', W: 'Wetsvoorstel', O: 'Stemming' }[s.soort];
+    let kop = soort;
+    if (s.indiener) {
+      const [naam, wie] = s.indiener.split('|');
+      const isFractie = !!(window.PARTIJEN || {})[wie] || DATA.fracties.includes(wie);
+      kop = `${soort} van ${naam} ${isFractie ? fractieChip(wie, chip) : `<span class="klein">(${wie})</span>`}`;
+      const mede = s.mede.filter((f) => f !== wie);
+      if (mede.length) kop += ` <span class="mede">mede namens ${mede.map((f) => fractieChip(f, chip)).join(' ')}</span>`;
+    }
     return `<li>
-      <span class="klein">${datumNL(s.datum)} · ${soort} · ${s.aangenomen ? 'aangenomen' : 'verworpen'}</span><br>
-      <a href="https://www.tweedekamer.nl/zoeken?qry=${encodeURIComponent(s.nummer)}" target="_blank" rel="noopener noreferrer">${s.onderwerp}</a>
+      <strong class="sg-indiener">${kop}</strong>
+      <span class="klein">${datumNL(s.datum)} · ${s.aangenomen ? 'aangenomen' : 'verworpen'}</span><br>
+      <a href="https://www.tweedekamer.nl/zoeken?qry=${encodeURIComponent(s.nummer)}" target="_blank" rel="noopener noreferrer" title="${s.onderwerp.replace(/"/g, '&quot;')}">${korteTitel(s.onderwerp)}</a>
       <br>${stemLijst(x, chip)}
     </li>`;
   }

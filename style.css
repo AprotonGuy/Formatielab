@@ -354,3 +354,8 @@ header .actueel .oud-melding { display: inline-block; margin-left: .4rem; backgr
 .citaat a { font-style: normal; white-space: nowrap; }
 .badge.bron-ok { background: #dcf1e2; color: #1e7a3c; }
 .badge.bron-nee { background: #efefef; color: #777; font-weight: 500; }
+
+/* Indiener van een motie */
+.sg-indiener { font-size: .95rem; margin-right: .4rem; }
+.sg-indiener .mede { font-weight: 400; font-size: .8rem; color: var(--zacht); }
+.sg-voorbeelden li { padding: .35rem 0; }

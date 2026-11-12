@@ -21,7 +21,7 @@ $ErrorActionPreference = 'Stop'
 $basis = 'https://gegevensmagazijn.tweedekamer.nl/OData/v4/2.0/Besluit'
 $filter = "Verwijderd eq false and StemmingsSoort ne null and Agendapunt/Activiteit/Datum ge ${Vanaf}T00:00:00Z"
 $expand = 'Stemming($select=Soort,ActorFractie,FractieGrootte,Vergissing,Verwijderd,Persoon_Id),' +
-          'Zaak($select=Nummer,Soort,Titel,Onderwerp),' +
+          'Zaak($select=Nummer,Soort,Titel,Onderwerp;$expand=ZaakActor($select=ActorNaam,ActorFractie,Relatie,Functie)),' +
           'Agendapunt($select=Id;$expand=Activiteit($select=Datum))'
 $url = $basis + '?$filter=' + [Uri]::EscapeDataString($filter) +
        '&$select=Id,BesluitSoort,StemmingsSoort&$expand=' + [Uri]::EscapeDataString($expand)
@@ -81,8 +81,20 @@ foreach ($b in $besluiten) {
   $titel = [string]$zaak.Titel
   if (-not $titelIndex.ContainsKey($titel)) { $titelIndex[$titel] = $titels.Count; [void]$titels.Add($titel) }
   $soort = switch ([string]$zaak.Soort) { 'Motie' { 'M' } 'Amendement' { 'A' } 'Wetgeving' { 'W' } default { 'O' } }
+  # Indiener ("naam|fractie", bij bewindspersonen "naam|functie") en de fracties van de medeindieners.
+  $actoren = @($zaak.ZaakActor)
+  $ind = $actoren | Where-Object { $_.Relatie -eq 'Indiener' } | Select-Object -First 1
+  $indiener = ''
+  if ($ind) {
+    $wie = if ($ind.ActorFractie) { [string]$ind.ActorFractie } else { [string]$ind.Functie }
+    if ($fractieNaarId.ContainsKey($wie)) { $wie = $fractieNaarId[$wie] }
+    $indiener = [string]$ind.ActorNaam + '|' + $wie
+  }
+  $mede = @($actoren | Where-Object { $_.Relatie -eq 'Medeindiener' -and $_.ActorFractie } | ForEach-Object {
+      $f = [string]$_.ActorFractie; if ($fractieNaarId.ContainsKey($f)) { $fractieNaarId[$f] } else { $f } } |
+    Sort-Object -Unique) -join ','
   [void]$rijen.Add([pscustomobject]@{ d = $datum; s = $soort; u = $uitslag; t = $titelIndex[$titel];
-    o = [string]$zaak.Onderwerp; n = [string]$zaak.Nummer; stem = $stem })
+    o = [string]$zaak.Onderwerp; n = [string]$zaak.Nummer; stem = $stem; i = $indiener; m = $mede })
 }
 
 # Stemmen als tekst: één teken per fractie (V = voor, T = tegen, . = niet gestemd / geen fractie).
@@ -91,7 +103,7 @@ $rijen = @($rijen | Sort-Object d -Descending)
 $regels = foreach ($r in $rijen) {
   $v = -join ($fracties | ForEach-Object { if ($r.stem.ContainsKey($_)) { $r.stem[$_] } else { '.' } })
   $o = $r.o; if ($o.Length -gt 220) { $o = $o.Substring(0, 217) + '...' }
-  '[' + (@($r.d, $r.s, $r.u, $r.t, $o, $r.n, $v) | ConvertTo-Json -Compress -Depth 2).Trim('[', ']') + ']'
+  '[' + (@($r.d, $r.s, $r.u, $r.t, $o, $r.n, $v, $r.i, $r.m) | ConvertTo-Json -Compress -Depth 2).Trim('[', ']') + ']'
 }
 
 $nu = (Get-Date).ToString('yyyy-MM-dd')
@@ -101,7 +113,8 @@ $inhoud = @"
 // draai het script opnieuw om bij te werken.
 // Bron: open data van de Tweede Kamer (https://opendata.tweedekamer.nl).
 // Per stemming: [datum, soort (M=motie, A=amendement, W=wet, O=overig), aangenomen (1/0),
-//                titelnummer (zie titels), onderwerp, zaaknummer, stemmen per fractie (V/T/.)]
+//                titelnummer (zie titels), onderwerp, zaaknummer, stemmen per fractie (V/T/.),
+//                indiener ("naam|fractie" of "naam|functie"), fracties van medeindieners (komma-gescheiden)]
 window.STEMGEDRAG = {
   opgehaald: '$nu',
   vanaf: '$Vanaf',
