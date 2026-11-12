@@ -6,7 +6,7 @@ Een statische website (HTML, CSS en JavaScript, geen server nodig). Open `index.
 
 ## Wat zit erin
 - **Zetels en meerderheden** in de Tweede en Eerste Kamer, voor peilingen en echte uitslagen.
-- **Wat gaat een coalitie waarschijnlijk doen?** Een inschatting per thema op basis van vereenvoudigde standpunten (`standpunten.js`).
+- **Wat gaat een coalitie waarschijnlijk doen?** Een inschatting per thema op basis van standpunten met citaten uit de verkiezingsprogramma's 2025 (`standpunten.js`).
 - **Echt stemgedrag**: hoe vaak partijen in de Tweede Kamer hetzelfde stemden (`stemgedrag.js`).
 - **Vergelijking met eerdere kabinetten** sinds 2002, met officiële bronnen (`kabinetten.js`).
 
@@ -24,4 +24,4 @@ Dit haalt op:
 Met de hand bijgehouden: andere peilingen en uitslagen (`data.js`), standpunten en urgentie (`standpunten.js`) en eerdere kabinetten (`kabinetten.js`).
 
 ## Let op
-De standpunten, prioriteiten en urgentie per thema zijn vereenvoudigde inschattingen en geen officiële partijposities. Controleer ze via de verkiezingsprogramma's. Het stemgedrag komt rechtstreeks uit de officiële open data.
+Elk standpunt is onderbouwd met een letterlijk citaat en paginanummer uit het verkiezingsprogramma 2025 (archief DNPP); `tools/citaten-controleren.ps1` controleert dat automatisch. De positie (-2 tot +2) en prioriteit zijn een samenvatting van die passages en blijven een oordeel. Groep Markuszower heeft nog geen programma en is afgeleid van de PVV. De urgentie per thema is een inschatting op basis van het nieuws. Het stemgedrag komt rechtstreeks uit de officiële open data.

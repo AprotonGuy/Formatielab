@@ -14,7 +14,7 @@ foreach ($m in $re.Matches($js)) {
   if (-not (Test-Path $f)) { "GEEN BESTAND  $partij"; continue }
   if (-not $cache[$partij]) { $cache[$partij] = [IO.File]::ReadAllText($f, [Text.Encoding]::UTF8).Split([char]12) }
   $pags = $cache[$partij]
-  $c = Norm $cit
+  $c = (Norm $cit) -replace '- ', ''
   $op = (Norm $pags[$pag - 1]) -replace '- ', ''
   if ($op.Contains($c)) { "OK      $partij p$pag" }
   else {
