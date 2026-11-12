@@ -418,3 +418,20 @@ header.kop .sub { margin: .45rem auto 0; max-width: 46rem; color: var(--blauw-1)
   .menuknop { width: 44px; height: 44px; }
   .menu { left: .6rem; top: 3.6rem; }
 }
+
+/* Tekstpagina (Over en methode) */
+.tekstpagina main.tekst { display: block; max-width: 52rem; margin: 0 auto; padding: 1.2rem 1.6rem 1.6rem; line-height: 1.6; }
+.tekst h2 { color: var(--blauw-1); margin: 1.8rem 0 .5rem; font-size: 1.3rem; scroll-margin-top: 1rem; }
+.tekst h3 { margin: 1.1rem 0 .3rem; font-size: 1.05rem; }
+.tekst ul { padding-left: 1.2rem; }
+.tekst li + li { margin-top: .35rem; }
+.tekst .nadruk { background: var(--blauw-5); border-left: 5px solid var(--blauw-1); border-radius: 8px; padding: .7rem 1rem; }
+.tekst .inhoud { font-size: .9rem; background: var(--vlak); border-radius: 8px; padding: .5rem .8rem; }
+.logboek { list-style: none; padding-left: 0 !important; }
+.logboek li { border-left: 3px solid var(--blauw-3); padding-left: .7rem; }
+.tekstpagina footer, body > footer { text-align: center; color: var(--zacht); }
+
+/* Links in het menu */
+.menu-links { list-style: none; margin: 1rem 0 0; padding: .8rem 0 0; border-top: 1px solid rgba(255,255,255,.25); display: grid; gap: .35rem; }
+.menu-links a { color: #fff; font-weight: 600; text-decoration: none; }
+.menu-links a:hover { text-decoration: underline; }

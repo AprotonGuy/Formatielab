@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Over en methode – FormatieLab</title>
+  <meta name="description" content="Hoe FormatieLab werkt: bronnen, rekenwijze, beperkingen, onafhankelijkheid en hoe je een fout meldt.">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="apple-touch-icon" href="img/icoon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="tekstpagina">
+  <header class="kop">
+    <h1><a href="./" title="Terug naar FormatieLab"><img src="img/logo.png" alt="FormatieLab" class="logo" width="640" height="266"></a></h1>
+    <p class="sub">Over en methode</p>
+  </header>
+
+  <main class="tekst paneel">
+    <p><a href="./">← Terug naar FormatieLab</a></p>
+
+    <nav class="inhoud" aria-label="Inhoud">
+      <a href="#wat">Wat is het?</a> · <a href="#stemadvies">Geen stemadvies</a> · <a href="#methode">Hoe werkt het?</a> ·
+      <a href="#beperkingen">Beperkingen</a> · <a href="#onafhankelijk">Onafhankelijkheid</a> · <a href="#bronnen">Bronnen</a> ·
+      <a href="#fout">Fout gezien?</a> · <a href="#privacy">Privacy</a> · <a href="#aansprakelijkheid">Aansprakelijkheid</a> ·
+      <a href="#wijzigingen">Wijzigingen</a>
+    </nav>
+
+    <h2 id="wat">Wat is FormatieLab?</h2>
+    <p>FormatieLab laat zien welke partijen samen een meerderheid kunnen vormen in de Tweede en Eerste Kamer, welke koers zo'n
+      coalitie waarschijnlijk zou varen, hoe die partijen in de Tweede Kamer echt stemmen, en hoe eerdere kabinetten met
+      (deels) dezelfde partijen het deden. Het is bedoeld om de gevolgen van verkiezingsuitslagen en peilingen te verkennen.</p>
+
+    <h2 id="stemadvies">Geen stemadvies</h2>
+    <p class="nadruk">FormatieLab geeft <strong>geen stemadvies</strong> en zegt niet welke partij of coalitie goed of slecht is.
+      Het is een hulpmiddel om te verkennen. De uitkomsten zijn inschattingen op basis van openbare bronnen; de werkelijke
+      formatie en het beleid van een kabinet kunnen heel anders uitpakken. Vorm je eigen oordeel en lees de
+      verkiezingsprogramma's van partijen zelf.</p>
+
+    <h2 id="methode">Hoe werkt het?</h2>
+    <h3>Zetels en meerderheden</h3>
+    <p>De zetelaantallen komen uit verkiezingsuitslagen en peilingen (zie <a href="#bronnen">bronnen</a>). Een meerderheid is
+      76 van de 150 zetels in de Tweede Kamer en 38 van de 75 in de Eerste Kamer. De volgorde van partijen in het halfrond is
+      een ruwe links-rechtsindeling en geen oordeel.</p>
+
+    <h3>Waarschijnlijke koers</h3>
+    <ul>
+      <li>Per thema heeft elke partij een <strong>standpunt met een letterlijk citaat en paginanummer</strong> uit haar
+        verkiezingsprogramma van 2025. Een script controleert dat elk citaat letterlijk op die pagina staat.</li>
+      <li>Op basis van die passages krijgt elke partij een <strong>positie</strong> (van −2 tot +2 tussen twee uitersten) en een
+        <strong>prioriteit</strong> (0 tot 3). Dat is een samenvatting en dus een <strong>oordeel</strong>: het citaat laat zien
+        wat een partij zegt, de plek op de schaal is onze lezing daarvan.</li>
+      <li>De koers van een coalitie is het gemiddelde van de posities, gewogen naar het aantal zetels. Een thema heet
+        "strijdpunt" als partijen die het belangrijk vinden ver uit elkaar liggen.</li>
+      <li>De <strong>urgentie</strong> van een thema (hoe dringend het nu is) is een inschatting op basis van het nieuws, met
+        bronnen.</li>
+      <li>Groep Markuszower heeft nog geen eigen programma; die posities zijn afgeleid van de PVV.</li>
+    </ul>
+
+    <h3>Echt stemgedrag</h3>
+    <ul>
+      <li>Alle stemmingen over moties, amendementen en wetten in de huidige Tweede Kamer komen rechtstreeks uit de
+        <a href="https://opendata.tweedekamer.nl" target="_blank" rel="noopener noreferrer">open data van de Tweede Kamer</a>
+        en worden elke dag bijgewerkt.</li>
+      <li>Bij hoofdelijke stemmingen telt wat de meerderheid van een fractie stemde. Stemmen die als vergissing zijn
+        gemarkeerd, laten we weg.</li>
+      <li>Welk thema een stemming heeft, bepalen we met trefwoorden in de titel en het onderwerp. Dat is niet perfect: een
+        stemming kan onder een verkeerd of extra thema vallen.</li>
+    </ul>
+
+    <h3>Beste formatie per thema</h3>
+    <p>Kies je thema's, dan krijgt elke coalitie per thema een score van 0 tot 100. Die bestaat voor 45% uit hoe belangrijk
+      de partijen het thema vinden, voor 30% uit hoe dicht hun standpunten bij elkaar liggen en voor 25% uit hoe vaak ze in de
+      Kamer echt hetzelfde stemden. Kies je ook een richting, dan telt die zwaar mee: een coalitie die precies de andere kant
+      op wil, scoort 0. De gewichten zijn een keuze, geen wetenschappelijke waarheid.</p>
+
+    <h3>Eerdere kabinetten</h3>
+    <p>Per kabinet sinds 2002 staan de looptijd, hoe het eindigde en wat het per thema deed, met links naar het
+      regeerakkoord, wetteksten en analyses van het CPB en PBL. De korte beleidssamenvattingen zijn door ons geschreven en
+      kunnen versimpelen; de officiële stukken zijn leidend.</p>
+
+    <h2 id="beperkingen">Beperkingen</h2>
+    <ul>
+      <li>Peilingen zijn momentopnamen met een foutmarge. Zetels kunnen in werkelijkheid flink anders uitvallen.</li>
+      <li>Eén citaat per partij per thema is een steekproef; een programma kan elders nuances bevatten.</li>
+      <li>Wat partijen in een programma schrijven, is niet hetzelfde als wat ze in een formatie binnenhalen. De koers kan
+        tijdens de formatie flink veranderen.</li>
+      <li>Fouten zijn mogelijk. Zie <a href="#fout">Fout gezien?</a></li>
+    </ul>
+
+    <h2 id="onafhankelijk">Onafhankelijkheid</h2>
+    <p>FormatieLab is een <strong>onafhankelijk, niet-commercieel</strong> project. Het is niet verbonden aan een politieke
+      partij, wordt door niemand betaald en bevat geen advertenties. De site is gemaakt met hulp van AI (Claude van
+      Anthropic); de bronnen en citaten zijn daarbij automatisch gecontroleerd. Alle code en gegevens zijn openbaar op
+      <a href="https://github.com/AprotonGuy/Formatielab" target="_blank" rel="noopener noreferrer">GitHub</a>, zodat iedereen
+      kan nagaan hoe uitkomsten tot stand komen.</p>
+
+    <h2 id="bronnen">Bronnen</h2>
+    <ul>
+      <li><strong>Verkiezingsprogramma's 2025</strong>: archief van het
+        <a href="https://www.rug.nl/research/dnpp/verkiezingen/tweede-kamer/tk-verkiezingen-2025" target="_blank" rel="noopener noreferrer">DNPP (Rijksuniversiteit Groningen)</a>.
+        Citaten zijn kort, letterlijk en met bronvermelding opgenomen voor analyse.</li>
+      <li><strong>Stemmingen en indieners</strong>: <a href="https://opendata.tweedekamer.nl" target="_blank" rel="noopener noreferrer">open data van de Tweede Kamer</a>.</li>
+      <li><strong>Peilingen</strong>: <a href="https://peilingwijzer.tomlouwerse.nl/" target="_blank" rel="noopener noreferrer">Peilingwijzer</a>
+        (Tom Louwerse) en Peil.nl via <a href="https://politpro.eu/nl/nederland" target="_blank" rel="noopener noreferrer">PolitPro</a>.</li>
+      <li><strong>Uitslagen en kabinetten</strong>: Kiesraad, <a href="https://www.parlement.com" target="_blank" rel="noopener noreferrer">Parlement.com</a>,
+        <a href="https://zoek.officielebekendmakingen.nl" target="_blank" rel="noopener noreferrer">officiële bekendmakingen</a> en
+        <a href="https://wetten.overheid.nl" target="_blank" rel="noopener noreferrer">wetten.overheid.nl</a>.</li>
+      <li><strong>Actualiteit</strong>: nieuwsartikelen, per thema gelinkt bij "Bronnen".</li>
+      <li><strong>Lettertype</strong>: Source Sans 3 van Adobe, onder de SIL Open Font License.</li>
+    </ul>
+
+    <h2 id="fout">Fout gezien?</h2>
+    <p>Staat er een standpunt, citaat, cijfer of samenvatting niet goed? Dat horen we graag, ook van partijen zelf. Meld het
+      via <span id="contact"></span>. Noem waar het staat, wat er volgens jou niet klopt en, als dat kan, een bron.</p>
+    <p>Wat we ermee doen: we controleren de melding tegen de bron en passen fouten <span id="reactietijd">zo snel mogelijk</span>
+      aan. Elke inhoudelijke aanpassing komt in het <a href="#wijzigingen">wijzigingslogboek</a>. Over een oordeel (zoals een
+      positie op de schaal) kun je van mening verschillen; dan leggen we uit hoe we tot onze keuze kwamen en passen we die aan
+      als de onderbouwing beter kan.</p>
+
+    <h2 id="privacy">Privacy</h2>
+    <p>FormatieLab verzamelt geen persoonsgegevens. Er zijn geen cookies, geen advertenties en geen bezoekersstatistieken.
+      Je keuzes (scenario, partijen, filters) worden alleen in je eigen browser bewaard en nergens naartoe gestuurd. De site
+      wordt gehost door GitHub Pages; GitHub kan technische gegevens zoals IP-adressen verwerken voor de werking en
+      beveiliging van de dienst. Links naar andere sites vallen onder het privacybeleid van die sites.</p>
+
+    <h2 id="aansprakelijkheid">Aansprakelijkheid</h2>
+    <p>FormatieLab is met zorg samengesteld, maar we kunnen niet garanderen dat alle informatie volledig, juist en actueel
+      is. Aan de inhoud kunnen geen rechten worden ontleend. De officiële bronnen (verkiezingsprogramma's, Kamerstukken,
+      uitslagen van de Kiesraad) zijn altijd leidend.</p>
+
+    <h2 id="wijzigingen">Wijzigingslogboek</h2>
+    <p class="klein">Inhoudelijke aanpassingen, nieuwste bovenaan. De dagelijkse automatische update van peilingen en stemmingen
+      staat hier niet in.</p>
+    <ul class="logboek" id="logboek"></ul>
+  </main>
+
+  <footer class="klein">FormatieLab · onafhankelijk en niet-commercieel · geen stemadvies</footer>
+
+  <script src="wijzigingen.js"></script>
+  <script>
+    (function () {
+      var c = window.CONTACT || {};
+      document.getElementById('contact').innerHTML = window.contactHTML ? window.contactHTML() : '';
+      if (c.reactietijd) document.getElementById('reactietijd').textContent = c.reactietijd;
+      var maanden = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+      document.getElementById('logboek').innerHTML = (window.WIJZIGINGEN || []).map(function (w) {
+        var d = w.datum.split('-');
+        return '<li><strong>' + Number(d[2]) + ' ' + maanden[Number(d[1]) - 1] + ' ' + d[0] + '</strong> – ' + w.wat + '</li>';
+      }).join('');
+    })();
+  </script>
+</body>
+</html>
