@@ -14,7 +14,7 @@
     aangepast: {},      // { scenarioId: { partijId: zetels } }
     gekozen: [],
     uitgesloten: [],
-    filters: { minimaal: true, metSelectie: true, ookEK: false, maxPartijen: 0, sorteer: 'krap' }
+    filters: { minimaal: true, metSelectie: true, ookEK: false, maxPartijen: 0, sorteer: 'krap', themas: [] }
   };
   const state = laden();
 
@@ -230,7 +230,40 @@
   }
 
   // ---------- alle coalities ----------
+  // Hoe goed kan een coalitie een thema aanpakken? Score 0-100, opgebouwd uit:
+  //   belang         (45%) hoe belangrijk de partijen het thema vinden (standpunten.js)
+  //   eensgezindheid (30%) hoe dicht hun standpunten bij elkaar liggen (standpunten.js)
+  //   stemgedrag     (25%) hoe vaak ze in de Kamer echt hetzelfde stemden over dit thema (stemgedrag.js)
+  // Zonder stemdata tellen alleen de eerste twee (naar verhouding).
+  const GEWICHT = { belang: 0.45, eens: 0.30, stem: 0.25 };
+  function themaScore(thema, leden) {
+    const a = window.CoalitieAnalyse ? window.CoalitieAnalyse.analyseer(thema, leden, namen) : null;
+    if (!a) return { thema, score: 0, uitleg: `${thema.naam}: geen standpunten bekend` };
+    const belang = a.belang / 3;
+    const eens = Math.max(0, 1 - a.conflict / 4);
+    const stem = window.CoalitieStemgedrag ? window.CoalitieStemgedrag.eensgezindheid(thema.id, leden, namen) : null;
+    let score;
+    if (stem) score = 100 * (GEWICHT.belang * belang + GEWICHT.eens * eens + GEWICHT.stem * stem.pct / 100);
+    else score = 100 * (GEWICHT.belang * belang + GEWICHT.eens * eens) / (GEWICHT.belang + GEWICHT.eens);
+    const uitleg = `${thema.naam}: belang ${a.belang.toFixed(1)}/3, standpunten ${Math.round(eens * 100)}% eensgezind` +
+      (stem ? `, in de Kamer ${stem.pct}% gelijk gestemd (${stem.n} stemmingen)` : ', geen stemdata');
+    return { thema, score, uitleg };
+  }
+  function scoreKlasse(s) { return s >= 70 ? 'score-hoog' : s >= 50 ? 'score-midden' : 'score-laag'; }
+
+  // Knoppen om maximaal 3 thema's te kiezen.
+  function tekenThemaKnoppen() {
+    const f = state.filters;
+    f.themas = (f.themas || []).filter((id) => (window.THEMAS || []).some((t) => t.id === id));
+    $('f-themas').innerHTML = (window.THEMAS || []).map((t) => {
+      const aan = f.themas.includes(t.id);
+      const vol = !aan && f.themas.length >= 3;
+      return `<button type="button" class="themaknop${aan ? ' aan' : ''}" data-thema="${t.id}" aria-pressed="${aan}"${vol ? ' disabled title="Je kunt maximaal 3 thema\'s kiezen"' : ''}>${t.naam}</button>`;
+    }).join('');
+  }
+
   function tekenCoalities(lijst, meerderheid) {
+    tekenThemaKnoppen();
     const f = state.filters;
     const uit = new Set(state.uitgesloten);
     let kandidaten = lijst.filter((p) => p.zetels > 0 && !uit.has(p.id)).sort((a, b) => b.zetels - a.zetels);
@@ -271,11 +304,22 @@
       res.push({ m, s, ek, aantal });
     }
 
+    // Score per gekozen thema (0-100): hoe goed kan deze coalitie dit thema aanpakken?
+    const gekozenThemas = (window.THEMAS || []).filter((t) => f.themas.includes(t.id));
+    if (gekozenThemas.length) {
+      res.forEach((c) => {
+        const leden = kandidaten.filter((_, i) => c.m & (1 << i));
+        c.themaScores = gekozenThemas.map((t) => themaScore(t, leden));
+        c.score = c.themaScores.reduce((a, x) => a + x.score, 0) / c.themaScores.length;
+      });
+    }
+
     const sorteer = {
       krap: (a, b) => a.s - b.s || a.aantal - b.aantal,
       weinig: (a, b) => a.aantal - b.aantal || a.s - b.s,
-      groot: (a, b) => b.s - a.s || a.aantal - b.aantal
-    }[f.sorteer] || ((a, b) => a.s - b.s);
+      groot: (a, b) => b.s - a.s || a.aantal - b.aantal,
+      thema: (a, b) => (b.score || 0) - (a.score || 0) || a.s - b.s
+    }[f.sorteer === 'thema' && !gekozenThemas.length ? 'krap' : f.sorteer] || ((a, b) => a.s - b.s);
     res.sort(sorteer);
 
     let info = `${res.length} ${res.length === 1 ? 'coalitie' : 'coalities'} gevonden`;
@@ -294,6 +338,7 @@
         <span class="cijfers"><strong>${c.s}</strong> zetels<br>${EERSTE_KAMER
           ? `<span class="${c.ek >= ekNodig ? 'ek-ok' : 'ek-nee'}" title="Zetels in de Eerste Kamer (${ekNodig} nodig)">EK ${c.ek} ${c.ek >= ekNodig ? '✓' : '✗'}</span> · `
           : ''}${c.aantal} partijen</span>
+        ${c.themaScores ? `<span class="themascores">${c.themaScores.map((x) => `<span class="themascore ${scoreKlasse(x.score)}" title="${x.uitleg}">${x.thema.naam.split(' ')[0]} <strong>${Math.round(x.score)}</strong></span>`).join('')}</span>` : ''}
       </button></li>`;
     }).join('');
   }
@@ -431,6 +476,17 @@
     fSel.addEventListener('change', () => { f.metSelectie = fSel.checked; render(); });
     fMax.addEventListener('change', () => { f.maxPartijen = parseInt(fMax.value, 10) || 0; render(); });
     fSort.addEventListener('change', () => { f.sorteer = fSort.value; render(); });
+    $('f-themas').addEventListener('click', (e) => {
+      const knop = e.target.closest('.themaknop');
+      if (!knop || knop.disabled) return;
+      const id = knop.dataset.thema;
+      f.themas = f.themas.includes(id) ? f.themas.filter((x) => x !== id) : f.themas.concat(id).slice(0, 3);
+      // Thema gekozen: sorteer meteen op "beste voor gekozen thema's".
+      if (f.themas.length) f.sorteer = 'thema';
+      else if (f.sorteer === 'thema') f.sorteer = 'krap';
+      fSort.value = f.sorteer;
+      render();
+    });
   }
 
   if (!SCENARIOS.length) {

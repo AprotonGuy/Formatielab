@@ -326,3 +326,17 @@ header .actueel .oud-melding { display: inline-block; margin-left: .4rem; backgr
 }
 .tabs.ingeklapt .tab::after { content: none; }
 @media (max-width: 760px) { .tab.actief::after { top: 100%; border-top-width: 12px; border-left-width: 8px; border-right-width: 8px; } }
+
+/* Beste formatie per thema */
+.themakeuze { margin: .2rem 0 .5rem; }
+.themaknoppen { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .25rem; }
+.themaknop { font: inherit; font-size: .8rem; padding: .15rem .55rem; border-radius: 999px; border: 1px solid var(--blauw-3); background: #fff; color: var(--tekst); cursor: pointer; }
+.themaknop:hover:not([disabled]) { background: var(--blauw-5); }
+.themaknop.aan { background: var(--blauw-1); border-color: var(--blauw-1); color: #fff; font-weight: 600; }
+.themaknop[disabled] { opacity: .45; cursor: not-allowed; }
+.coalitie { flex-wrap: wrap; }
+.themascores { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: .25rem; margin-top: .3rem; }
+.themascore { font-size: .75rem; padding: .05rem .45rem; border-radius: 999px; cursor: help; }
+.themascore.score-hoog { background: #dcf1e2; color: #1e7a3c; }
+.themascore.score-midden { background: #fbefd2; color: #8a5d00; }
+.themascore.score-laag { background: #f8dcda; color: #b3261e; }

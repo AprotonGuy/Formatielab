@@ -229,5 +229,17 @@
     return `<p class="buiten"><strong>Echt stemgedrag:</strong> ${balk(r.pct)} in ${r.pct}% van ${r.geteld} stemmingen over dit thema stemden ze hetzelfde.</p>`;
   }
 
-  window.CoalitieStemgedrag = { teken, themaRegel, analyse };
+  // Voor het sorteren van coalities: % eensgezind over een thema (of null zonder data).
+  const themaCache = {};
+  function eensgezindheid(themaId, leden, namen) {
+    const k = voorbereiden();
+    if (!k || leden.length < 2) return null;
+    const l = leden.map((p) => ({ p, i: fractieIndex(p, namen) })).filter((x) => x.i >= 0);
+    if (l.length < 2) return null;
+    const lijst = themaCache[themaId] || (themaCache[themaId] = k.stemmingen.filter((s) => s.themas.includes(themaId)));
+    const r = bereken(lijst, l);
+    return r.geteld ? { pct: r.pct, n: r.geteld } : null;
+  }
+
+  window.CoalitieStemgedrag = { teken, themaRegel, analyse, eensgezindheid };
 })();
