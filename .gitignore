@@ -4,3 +4,5 @@ Thumbs.db
 tools/programmas/
 # Myriad-bestanden (licentie onduidelijk): nooit publiceren
 Font/
+# Origineel logo en stockbestanden: niet publiceren (de site gebruikt img/)
+Logo/

@@ -3,15 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Formatielab</title>
+  <title>FormatieLab</title>
+  <meta name="description" content="Welke partijen kunnen samen regeren, wat gaan ze dan doen, en hoe stemmen ze echt? Met peilingen, verkiezingsprogramma's en stemgedrag uit de Tweede Kamer.">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="apple-touch-icon" href="img/icoon-192.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Formatielab</h1>
+  <header class="kop">
+    <button type="button" class="menuknop" id="menuknop" aria-expanded="false" aria-controls="menu" title="Gegevens en bijwerken">
+      <span></span><span></span><span></span>
+    </button>
+    <h1><img src="img/logo.png" alt="FormatieLab" class="logo" width="640" height="266"></h1>
     <p class="sub">Welke partijen kunnen samen regeren, wat gaan ze dan doen, en hoe stemmen ze echt? Zo zie je wat je stem kan betekenen.</p>
-    <p class="actueel" id="actueel"></p>
   </header>
+
+  <aside class="menu" id="menu" hidden>
+    <h2>Hoe actueel zijn de gegevens?</h2>
+    <div class="actueel" id="actueel"></div>
+    <button type="button" class="ververs" id="ververs">⟳ Controleren op nieuwe gegevens</button>
+    <p class="klein" id="ververs-status"></p>
+    <p class="klein">Peilingen en stemmingen worden elke ochtend rond 07:30 automatisch opgehaald. De Peilingwijzer zelf
+      verschijnt onregelmatig, meestal eens per paar weken. Standpunten en eerdere kabinetten worden met de hand bijgehouden.</p>
+  </aside>
 
   <main>
     <section class="paneel" id="paneel-partijen">

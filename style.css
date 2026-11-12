@@ -376,3 +376,45 @@ header .actueel .oud-melding { display: inline-block; margin-left: .4rem; backgr
 .sg-indiener { font-size: .95rem; margin-right: .4rem; }
 .sg-indiener .mede { font-weight: 400; font-size: .8rem; color: var(--zacht); }
 .sg-voorbeelden li { padding: .35rem 0; }
+
+/* Kop met logo en menu (vervangt de blauwe balk) */
+body > header.kop { position: relative; background: none; color: var(--tekst); text-align: center; padding: .4rem 3.5rem .2rem; margin-bottom: .8rem; }
+header.kop h1 { margin: 0; line-height: 0; }
+header.kop .logo { width: min(320px, 70vw); height: auto; }
+header.kop .sub { margin: .45rem auto 0; max-width: 46rem; color: var(--blauw-1); font-weight: 600; font-size: 1rem; }
+
+.menuknop {
+  position: absolute; left: 0; top: .4rem; width: 52px; height: 52px; border-radius: 50%;
+  border: none; background: var(--blauw-1); cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 6px rgba(31, 45, 61, .2);
+}
+.menuknop span { display: block; width: 24px; height: 3px; border-radius: 2px; background: #fff; transition: transform .2s, opacity .2s; }
+.menuknop.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+.menuknop.open span:nth-child(2) { opacity: 0; }
+.menuknop.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+.menuknop.let-op::after { content: ''; position: absolute; top: 4px; right: 4px; width: 11px; height: 11px; border-radius: 50%; background: #f0a500; border: 2px solid #fff; }
+.menuknop:focus-visible { outline: 3px solid var(--blauw-2); outline-offset: 2px; }
+
+.menu {
+  position: absolute; z-index: 20; left: 1.25rem; top: 4.4rem; width: min(360px, calc(100vw - 2.5rem));
+  background: var(--blauw-1); color: #fff; border-radius: 14px; padding: 1rem 1.1rem; box-shadow: 0 8px 24px rgba(31, 45, 61, .3);
+}
+.menu h2 { margin: 0 0 .6rem; font-size: 1.05rem; }
+.menu .klein { color: var(--blauw-5); }
+.bronlijst { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.bronlijst li { display: grid; grid-template-columns: 1fr auto; gap: 0 .6rem; }
+.bronlijst li span { font-weight: 600; }
+.bronlijst li small { grid-column: 1 / -1; color: var(--blauw-5); font-size: .78rem; }
+.bronlijst li.oud strong { color: #ffd58a; }
+.menu .oud-melding { margin: .7rem 0 0; background: #fff3d6; color: #8a5d00; border-radius: 999px; padding: .3rem .8rem; font-weight: 600; font-size: .85rem; }
+.ververs { margin-top: .8rem; width: 100%; font: inherit; font-weight: 700; border: none; border-radius: 999px; padding: .5rem 1rem; background: #fff; color: var(--blauw-1); cursor: pointer; }
+.ververs:hover:not([disabled]) { background: var(--blauw-5); }
+.ververs[disabled] { opacity: .6; cursor: wait; }
+#ververs-status { min-height: 1.2em; margin: .5rem 0; color: #fff; }
+@media (max-width: 680px) {
+  body > header.kop { padding: .2rem 3rem 0; }
+  header.kop .logo { width: min(220px, 60vw); }
+  header.kop .sub { font-size: .88rem; }
+  .menuknop { width: 44px; height: 44px; }
+  .menu { left: .6rem; top: 3.6rem; }
+}
