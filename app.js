@@ -3,7 +3,10 @@
   'use strict';
 
   const PARTIJEN = window.PARTIJEN || {};
-  const SCENARIOS = window.SCENARIOS || [];
+  // Het standaardscenario staat bovenaan in de lijst en wordt bij een eerste bezoek gekozen.
+  const STANDAARD_SCENARIO = 'kamer-nu';
+  const SCENARIOS = (window.SCENARIOS || []).slice().sort((a, b) =>
+    (b.id === STANDAARD_SCENARIO) - (a.id === STANDAARD_SCENARIO));
   const EERSTE_KAMER = window.EERSTE_KAMER || null;
   const OPSLAG_SLEUTEL = 'coalitiewijzer-v1';
   const MAX_PARTIJEN_REKENEN = 18; // 2^18 combinaties is nog snel genoeg
