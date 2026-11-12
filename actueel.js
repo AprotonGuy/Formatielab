@@ -24,6 +24,8 @@
     const peilnl = (window.SCENARIOS || []).filter((s) => !s.auto && /peil/i.test(s.id) && s.datum)
       .sort((a, b) => b.datum.localeCompare(a.datum))[0];
     if (peilnl) lijst.push({ naam: 'Peil.nl', datum: peilnl.datum, handmatig: true });
+    const tk = window.ACTUALITEIT && window.ACTUALITEIT.tweedekamer;
+    if (tk) lijst.push({ naam: 'Tweede Kamer (fracties)', datum: tk.datum, opgehaald: tk.opgehaald });
     const ek = window.ACTUALITEIT && window.ACTUALITEIT.eerstekamer;
     if (ek) lijst.push({ naam: 'Eerste Kamer (fracties)', datum: ek.datum, opgehaald: ek.opgehaald });
     const sg = window.STEMGEDRAG;

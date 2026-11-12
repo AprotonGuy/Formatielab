@@ -65,12 +65,12 @@ window.SCENARIOS = [
   {
     id: 'kamer-nu',
     titel: 'Huidige Tweede Kamer — fracties november 2026',
-    bron: 'https://www.parlement.com/kabinet-jetten-2026-heden',
-    // Uitslag 2025, met de afsplitsing van Groep Markuszower (7 zetels, jan. 2026)
-    // en GL-PvdA onder de nieuwe naam PRO. Andere tussentijdse wijzigingen zijn niet verwerkt.
+    bron: 'https://www.tweedekamer.nl/kamerleden_en_commissies/fracties',
+    // Terugval als tweedekamer.js ontbreekt; gecontroleerd met de open data van de Tweede Kamer (12 nov 2026).
+    // tweedekamer.js (automatisch, dagelijks) overschrijft dit.
     zetels: {
       'D66': 26, 'VVD': 22, 'PRO': 20, 'PVV': 19, 'CDA': 18, 'JA21': 9, 'FvD': 7, 'DNA': 7,
-      'BBB': 4, 'DENK': 3, 'SGP': 3, 'PvdD': 3, 'CU': 3, 'SP': 3, '50PLUS': 2, 'Volt': 1
+      'BBB': 3, 'DENK': 3, 'SGP': 3, 'PvdD': 3, 'CU': 3, 'SP': 3, '50PLUS': 2, 'Volt': 1, 'Lid Keijzer': 1
     }
   },
   {
